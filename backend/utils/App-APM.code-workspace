@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../../gitlab.com/apotek-pos"
+		},
+		{
+			"path": "../../APM-Apps"
+		}
+	],
+	"settings": {}
+}
