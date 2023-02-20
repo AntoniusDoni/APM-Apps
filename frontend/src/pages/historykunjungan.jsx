@@ -10,8 +10,10 @@ import { Dropdown } from "flowbite-react";
 import { HiPlus, HiTrash } from "react-icons/hi";
 import { useModalState } from "../utils/hooks";
 import ModalSKDP from "./modalSkdp";
+import { useNavigate } from "react-router-dom";
 export default function HistoryKunjungan() {
     const [list, setList] = useState(() => defaultSKDP());
+    const navigate = useNavigate();
     const { data, setData, errors } = useForm({
         no_ka: '',
         tglmulai: new Date(),
@@ -50,14 +52,14 @@ export default function HistoryKunjungan() {
         formModal.setData({ title: "SKDP", sep })
         formModal.toggle()
     }
-    const deletSEP=(noSep)=>{
+    const deletSEP = (noSep) => {
 
     }
     useEffect(() => {
         if (data.no_ka !== "") {
             GetListHistory()
         }
-    }, [data.tglmulai,data.tglakhir])
+    }, [data.tglmulai, data.tglakhir])
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             {loading && (
@@ -84,7 +86,7 @@ export default function HistoryKunjungan() {
                         format={"dd/MM/yyyy"}
                         error={errors.tglakhir}
                     />
-                   <div >
+                    <div >
                         <Label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Kartu</Label>
                         <TextInput
                             type="text"
@@ -101,15 +103,15 @@ export default function HistoryKunjungan() {
             <table className="w-full text-sm text-left text-gray-900 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-00">
                     <tr>
-                    <th key={0} scope="col" className="px-6 py-4">No</th>
-                    <th>No Rujukan</th>
-                    <th>No SEP</th>
-                    <th>Nama Peserta</th>
-                    <th>Diagnosa</th>
-                    <th>Poli</th>
-                    <th>Tgl SEP</th>
-                    <th>Kelas</th>
-                    <th>Pilih</th>
+                        <th key={0} scope="col" className="px-6 py-4">No</th>
+                        <th>No Rujukan</th>
+                        <th>No SEP</th>
+                        <th>Nama Peserta</th>
+                        <th>Diagnosa</th>
+                        <th>Poli</th>
+                        <th>Tgl SEP</th>
+                        <th>Kelas</th>
+                        <th>Pilih</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -125,28 +127,34 @@ export default function HistoryKunjungan() {
                                 <td className="py-4 px-6">{detail.tglSep}</td>
                                 <td className="py-4 px-6">{detail.kelasRawat}</td>
                                 <td className="py-4 px-6">
-                                {detail.noSuratKontrol!=''&&(
-                                    <Dropdown
-                                        label={"Opsi"}
-                                        floatingArrow={true}
-                                        arrowIcon={true}
-                                        dismissOnClick={true}
-                                        size={'sm'}
-                                    >
-                                <Dropdown.Item onClick={() => toggleFormModal(detail)}>
-                                            <div className='flex space-x-1 items-center'>
-                                                <HiPlus />
-                                                <div>Buat SKDP</div>
-                                            </div>
-                                        </Dropdown.Item>
-                                        <Dropdown.Item onClick={()=>deletSEP(detail.noSep)}>
-                                            <div className='flex space-x-1 items-center'>
-                                                <HiTrash />
-                                                <div>Delete SEP</div>
-                                            </div>
-                                        </Dropdown.Item>
-                                    </Dropdown>
-                                )}
+                                    {detail.noSuratKontrol != '' && (
+                                        <Dropdown
+                                            label={"Opsi"}
+                                            floatingArrow={true}
+                                            arrowIcon={true}
+                                            dismissOnClick={true}
+                                            size={'sm'}
+                                        >
+                                             <Dropdown.Item onClick={()=>navigate("/histrorykontrol/"+detail.noKartu)}>
+                                                <div className='flex space-x-1 items-center'>
+                                                    <HiPlus />
+                                                    <div>Lihat History Kontrol</div>
+                                                </div>
+                                            </Dropdown.Item>
+                                            <Dropdown.Item onClick={() => toggleFormModal(detail)}>
+                                                <div className='flex space-x-1 items-center'>
+                                                    <HiPlus />
+                                                    <div>Buat SKDP</div>
+                                                </div>
+                                            </Dropdown.Item>
+                                            <Dropdown.Item onClick={() => deletSEP(detail.noSep)}>
+                                                <div className='flex space-x-1 items-center'>
+                                                    <HiTrash />
+                                                    <div>Delete SEP</div>
+                                                </div>
+                                            </Dropdown.Item>
+                                        </Dropdown>
+                                    )}
                                 </td>
                             </tr>
                         ))

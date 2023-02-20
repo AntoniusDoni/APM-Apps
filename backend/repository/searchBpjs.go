@@ -182,3 +182,26 @@ func (repo *Repository) ListHistory(tglmulai, tglakhir, no_ka string) *utils.Res
 	json.Unmarshal(resBpjs.Body, &res.Response)
 	return &res
 }
+
+func (repo *Repository) CreateSKDP(req *utils.RequestSKDP) *utils.ResponseCreateSKDP {
+	fmt.Println("sep", req.NoSEP, "kodepoli", req.PoliKontrol, "nmpoli", req.NmPoliBpjs, "kodedokter", req.KodeDokter, "tgl", req.TglRencanaKontrol)
+
+	// requestbody := new(utils.InsertSKDP)
+	// layout := "2006-01-02T15:04:05.000Z"
+	// dateStart, err := time.Parse(layout, req.TglRencanaKontrol)
+	// if err != nil {
+	// 	return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: "503", Message: utils.Failed}}
+	// }
+	// fmt.Println(req)
+	// req.TglRencanaKontrol = dateStart.Format(utils.YYYYMMDD)
+	// req.User = "Admin APM"
+	// requestbody.Request = *req
+	// UrlCreateSKDP := fmt.Sprintf(utils.INSERTSKDP, utils.GET_CLAIM)
+	// reqbyte, err := json.Marshal(requestbody)
+	// resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: UrlCreateSKDP, Body: reqbyte}, 30*time.Second)
+	// if err != nil {
+	// 	return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: resBpjs.MetaData.Code, Message: resBpjs.MetaData.Message}}
+	// }
+	// return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: resBpjs.MetaData.Code, Message: resBpjs.MetaData.Message}}
+	return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: "200", Message: utils.SUCSSES}}
+}

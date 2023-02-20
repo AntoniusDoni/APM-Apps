@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/hmac"
@@ -9,6 +10,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -170,6 +172,92 @@ func GETBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, error
 		}
 	}
 	return &ResponseBriging{MetaData: resBody.MetaData, Body: []byte(decyptRes)}, nil
+}
+
+func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, error) {
+
+	godotenv.Load()
+	constid := os.Getenv("CONST_ID")
+	Secretkey := os.Getenv("SECRET_KEY")
+	userkey := os.Getenv("USER_KEY")
+
+	secondDate := time.Date(1970, 01, 01, 0, 0, 0, 0, time.UTC)
+	locInd, _ := time.LoadLocation("Asia/Jakarta")
+	now := time.Now()
+	nowDate := now.In(locInd)
+	xTimestamp := int(nowDate.Sub(secondDate).Seconds())
+	x := fmt.Sprintf("%s&%d", constid, xTimestamp)
+	encodedSignature := GenerateHMAC256(Secretkey, x)
+	req, err := http.NewRequest("POST", reqinf.URL, bytes.NewReader(reqinf.Body))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Content-Type", "Application/x-www-form-urlencoded")
+	req.Header.Add("X-cons-id", constid)
+	req.Header.Add("X-signature", encodedSignature)
+	req.Header.Add("X-timestamp", fmt.Sprintf("%d", xTimestamp))
+	req.Header.Add("user_key", userkey)
+	cl := &http.Client{
+		Timeout: timeout,
+	}
+
+	decoder := json.NewDecoder(req.Body)
+	var t InsertSKDP
+	err = decoder.Decode(&t)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(t.Request)
+
+	res, err := cl.Do(req)
+
+	if err != nil {
+		fmt.Println("EROOR : ", err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	// read body
+	buf, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println("ERROR READ RESPONSE:", err)
+		return nil, err
+	}
+	key := fmt.Sprintf("%s%s%d", constid, Secretkey, xTimestamp)
+	var resBody ResposeBodyBriging
+	json.Unmarshal(buf, &resBody)
+	if resBody.MetaData.Code != "200" {
+		return &ResponseBriging{MetaData: resBody.MetaData, Body: nil}, nil
+	}
+
+	shakey := sha256.New()
+	shakey.Write([]byte(key))
+	keys := shakey.Sum(nil)
+
+	ds, err := AESDecrypt(resBody.Response, keys)
+
+	if err != nil {
+		fmt.Println("ERROR AES DECODE :", err)
+		return nil, err
+	}
+	var decyptRes string
+	var errs error
+	var response ResDecycptAPI
+	if len(ds) > 0 {
+		decyptRes, errs = lzstring.DecompressFromEncodedURIComponent(string(ds))
+		json.Unmarshal([]byte(decyptRes), &response)
+		if errs != nil {
+			fmt.Println("ERROR LZSTRING DECODE : ", errs)
+			return nil, err
+		}
+	}
+	return &ResponseBriging{MetaData: resBody.MetaData, Body: []byte(decyptRes)}, nil
+
+}
+
+func newFunction(decoder *json.Decoder, t InsertSKDP) error {
+	err := decoder.Decode(&t)
+	return err
 }
 
 func GenerateHMAC256(k, message string) string {

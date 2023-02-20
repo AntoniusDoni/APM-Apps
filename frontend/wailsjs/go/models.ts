@@ -175,7 +175,113 @@ export namespace utils {
 		    return a;
 		}
 	}
+	export class ListPoliKontrol {
+	    metaData: HeadResponse;
+	    response: struct { List []utils.PoliKontrol "json:\"list\"" };
 	
+	    static createFrom(source: any = {}) {
+	        return new ListPoliKontrol(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.metaData = this.convertValues(source["metaData"], HeadResponse);
+	        this.response = this.convertValues(source["response"], Object);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class PoliKontrol {
+	    kodePoli: string;
+	    namaPoli: string;
+	    kapasitas: string;
+	    jmlRencanaKontroldanRujukan: string;
+	    persentase: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PoliKontrol(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kodePoli = source["kodePoli"];
+	        this.namaPoli = source["namaPoli"];
+	        this.kapasitas = source["kapasitas"];
+	        this.jmlRencanaKontroldanRujukan = source["jmlRencanaKontroldanRujukan"];
+	        this.persentase = source["persentase"];
+	    }
+	}
+	export class RequestSKDP {
+	    noSEP?: string;
+	    kodeDokter?: string;
+	    poliKontrol?: string;
+	    tglRencanaKontrol?: string;
+	    noka: string;
+	    namaPoli: string;
+	    nmdokter: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new RequestSKDP(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.noSEP = source["noSEP"];
+	        this.kodeDokter = source["kodeDokter"];
+	        this.poliKontrol = source["poliKontrol"];
+	        this.tglRencanaKontrol = source["tglRencanaKontrol"];
+	        this.noka = source["noka"];
+	        this.namaPoli = source["namaPoli"];
+	        this.nmdokter = source["nmdokter"];
+	    }
+	}
+	export class ResponseCreateSKDP {
+	    metaData: HeadResponse;
+	
+	    static createFrom(source: any = {}) {
+	        return new ResponseCreateSKDP(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.metaData = this.convertValues(source["metaData"], HeadResponse);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ResponseListHistory {
 	    metaData: HeadResponse;
 	    listdata: struct { Histori []utils.History "json:\"histori\"" };

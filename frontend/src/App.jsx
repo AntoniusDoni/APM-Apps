@@ -17,7 +17,9 @@ function App() {
                             <Route path="/" element={<SearchNOKartu/>}/>
                             <Route path="pendaftaran" element={<Pendaftaran/>}/>
                             <Route path="histrorykunjungan" element={<HistoryKunjungan/>}/>
-                            <Route path="histrorykontrol" element={<HistoryKontrol/>}/>
+                            <Route path="histrorykontrol" element={<HistoryKontrol/>}>
+                                <Route path=":noka" element={<HistoryKontrol/>}/>
+                            </Route>
                         </Route>
                     </Routes>
                 </HashRouter>

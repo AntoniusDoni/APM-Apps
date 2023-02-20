@@ -1,24 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { ListSKDP,SearchRujukanByNoKa } from "../../wailsjs/go/repository/Repository"
+import { ListSKDP, SearchRujukanByNoKa } from "../../wailsjs/go/repository/Repository"
 import Modal from "../components/Modal";
 import Loading from "../components/Loading"
 import { useForm } from "@inertiajs/react";
 import FormInputMounthYears from "../components/FormInputMounthYears"
 import { TextInput, Label } from 'flowbite-react';
 import { defaultSKDP } from "../utils/helper";
-import Button from "../components/Button";
+import { Dropdown } from "flowbite-react";
+import { HiPlus, HiTrash } from "react-icons/hi";
 import { useBucket } from "../context/AppContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import ModallConfrim from "../components/ModallConfrim";
+import { useModalState } from "../utils/hooks";
 export default function HistoryKontrol() {
     const { user, setUser } = useBucket()
+    let { noka } = useParams()
+    if (noka == undefined) {
+        noka = ''
+    }
     const [list, setList] = useState(() => defaultSKDP());
     const { data, setData, errors } = useForm({
-        no_ka: '',
+        no_ka: noka,
         tanggal: new Date()
     })
     const [isOpen, setIsOpen] = useState(false);
     const [message, setMessage] = useState("")
     const [loading, setLoading] = useState(false)
+    const formModal = useModalState()
+    const toggleFormModal = (data = null) => {
+        formModal.setData({ title: "Perhatian",text:"Apakah Anda Yakin akan Menghapus data ini?",confrim:"Delete",cancel:"Tidak", data })
+        formModal.toggle()
+    }
+
     const navigate = useNavigate();
     const toggle = () => {
         setIsOpen(!isOpen);
@@ -30,7 +43,6 @@ export default function HistoryKontrol() {
     const GelistSKDP = () => {
         setLoading(true)
         ListSKDP(data.no_ka, data.tanggal).then((response) => {
-            console.log(response)
             if (response.metaData.code == 200) {
                 setList(response?.listdata?.list)
             } else {
@@ -48,23 +60,27 @@ export default function HistoryKontrol() {
     }
     const handleSubmit = (noSuratKontrol) => {
         setLoading(true)
-        SearchRujukanByNoKa(data.no_ka,noSuratKontrol).then((response) => {
-            console.log(response)
+        SearchRujukanByNoKa(data.no_ka, noSuratKontrol).then((response) => {
+      
             if (response.metaData.code == 200) {
                 setUser(response)
                 navigate("/pendaftaran")
-            }else{
+            } else {
                 setMessage(response.metaData.message)
                 toggle()
             }
-        }) .catch((err) => console.log(err))
-        .finally(() => setLoading(false))
+        }).catch((err) => console.log(err))
+            .finally(() => setLoading(false))
+    }
+    const deleteSkdp = (noSuratKontrol) => {
+       
+        formModal.toggle()
     }
     useEffect(() => {
         if (data.tanggal != '' && data.no_ka != '')
             GelistSKDP()
     }, [data.tanggal])
-  
+
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             {loading && (
@@ -118,19 +134,37 @@ export default function HistoryKontrol() {
                                 <td className="py-4 px-6">{detail.tglRencanaKontrol}</td>
                                 <td className="py-4 px-6">
                                     {
-                                        detail.noSepAsalKontrol!=''&&(
-                                            <Button
-                                        onClick={()=>handleSubmit(detail.noSuratKontrol)}
-                                       >Daftar</Button>
+                                        detail.noSepAsalKontrol != '' && (
+                                            <Dropdown
+                                                label={"Opsi"}
+                                                floatingArrow={true}
+                                                arrowIcon={true}
+                                                dismissOnClick={true}
+                                                size={'sm'}
+                                            >
+                                                <Dropdown.Item onClick={() => handleSubmit(detail.noSuratKontrol)}>
+                                                    <div className='flex space-x-1 items-center'>
+                                                        <HiPlus />
+                                                        <div>Daftar</div>
+                                                    </div>
+                                                </Dropdown.Item>
+                                                <Dropdown.Item onClick={() => toggleFormModal(detail)}>
+                                                    <div className='flex space-x-1 items-center'>
+                                                        <HiPlus />
+                                                        <div>Hapus SKDP</div>
+                                                    </div>
+                                                </Dropdown.Item>
+                                            </Dropdown>
                                         )
                                     }
-                                    
+
                                 </td>
                             </tr>
                         ))
                     }
                 </tbody>
             </table>
+            <ModallConfrim modalState={formModal} Onconfrim={deleteSkdp}></ModallConfrim>
         </div>
     )
 }

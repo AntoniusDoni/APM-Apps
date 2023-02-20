@@ -30,6 +30,25 @@ func (repo *Repository) GetKodePoliBPJS(poli string) *utils.ListPoli {
 	}
 	res.MetaData.Code = resBpjs.MetaData.Code
 	json.Unmarshal(resBpjs.Body, &res)
-	fmt.Println(res.ListPoli)
+	return &res
+}
+
+func (repo *Repository) GetPoliKontrolBPJS(nomor, jenis, tanggal string) *utils.ListPoliKontrol {
+	tanggalKontrol, err := utils.ParseStrigDate(tanggal)
+	if err != nil {
+		return &utils.ListPoliKontrol{
+			MetaData: utils.HeadResponse{Code: "503", Message: utils.Failed},
+		}
+	}
+	urlReq := fmt.Sprintf(utils.GET_LIST_POLI_KONTROL, utils.GET_CLAIM, jenis, nomor, tanggalKontrol)
+	resBpjs, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlReq}, 30*time.Second)
+	var res utils.ListPoliKontrol
+	if err != nil {
+		return &utils.ListPoliKontrol{
+			MetaData: utils.HeadResponse{Code: "404", Message: utils.Failed},
+		}
+	}
+	res.MetaData.Code = resBpjs.MetaData.Code
+	json.Unmarshal(resBpjs.Body, &res.Response)
 	return &res
 }

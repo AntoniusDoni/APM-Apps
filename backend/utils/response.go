@@ -1,5 +1,7 @@
 package utils
 
+import "time"
+
 type ResponseSearchRujukan struct {
 	MetaData struct {
 		Code    string `json:"code"`
@@ -194,6 +196,9 @@ type ResponseListHistory struct {
 		Histori []History `json:"histori"`
 	} `json:"listdata"`
 }
+type ResponseCreateSKDP struct {
+	MetaData HeadResponse `json:"metaData"`
+}
 
 type History struct {
 	NoSep        string      `json:"noSep"`
@@ -219,4 +224,26 @@ type ListPoli struct {
 type Poli struct {
 	Kode string `json:"kode"`
 	Nama string `json:"nama"`
+}
+type PoliKontrol struct {
+	KodePoli                    string `json:"kodePoli"`
+	NamaPoli                    string `json:"namaPoli"`
+	Kapasitas                   string `json:"kapasitas"`
+	JmlRencanaKontroldanRujukan string `json:"jmlRencanaKontroldanRujukan"`
+	Persentase                  string `json:"persentase"`
+}
+type ListPoliKontrol struct {
+	MetaData HeadResponse `json:"metaData"`
+	Response struct {
+		List []PoliKontrol `json:"list"`
+	} `json:"response"`
+}
+
+func ParseStrigDate(tanggal string) (string, error) {
+	layout := "2006-01-02T15:04:05.000Z"
+	dateStart, err := time.Parse(layout, tanggal)
+	if err != nil {
+		return "", err
+	}
+	return dateStart.Format(YYYYMMDD), nil
 }
