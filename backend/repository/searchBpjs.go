@@ -6,29 +6,34 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func (repo *Repository) SearchPasien(no_rujukan, no_ka string) *utils.ResponseSearchRujukan {
 	var res utils.ResponseSearchRujukan
-	var exists bool
-	err := repo.db.Model(&models.Pasien{}).Select("count(*) > 0").Where("no_peserta=?", no_ka).Find(&exists).Error
+	var check utils.CheckPasien
+
+	err := repo.db.Model(&models.Pasien{}).Select("count(*) > 0 as isexists,alamat").Where("no_peserta=?", no_ka).Find(&check).Error
 	if err != nil {
 		res.MetaData.Code = "503"
 		res.MetaData.Message = "Terjadi Kendala Jaringan"
 		return &res
 	}
-	if exists == false {
+	if check.Isexists == false {
 		res.MetaData.Code = "404"
 		res.MetaData.Message = utils.Pasiet_NOT_EXIST
 		return &res
 	} else {
-		return repo.SearchRujukanByNorujukan(no_rujukan, no_ka)
+		return repo.SearchRujukanByNorujukan(no_rujukan, no_ka, check.Alamat)
 	}
 
 }
 
-func (repo *Repository) SearchRujukanByNorujukan(no_rujukan, no_ka string) *utils.ResponseSearchRujukan {
+func (repo *Repository) SearchRujukanByNorujukan(no_rujukan, no_ka, alamat string) *utils.ResponseSearchRujukan {
 
 	urlreq := fmt.Sprintf(utils.GET_BYNO_RUJUKAN, utils.GET_CLAIM, no_rujukan)
 	urlgetjml := fmt.Sprintf(utils.GET_BYNO_RUJUKAN, utils.GET_CLAIM, fmt.Sprintf("JumlahSEP/1/%s", no_rujukan))
@@ -50,6 +55,7 @@ func (repo *Repository) SearchRujukanByNorujukan(no_rujukan, no_ka string) *util
 	res.MetaData.Code = resBpjs.MetaData.Code
 	res.MetaData.Message = resBpjs.MetaData.Message
 	json.Unmarshal(resBpjs.Body, &res.Response)
+	res.Response.Rujukan.Peserta.Alamat = alamat
 	res.ListDokter = repo.GetListDockterBPJS(res.Response.Rujukan.PoliRujukan.Kode)
 	poli := repo.GetMapPoli(res.Response.Rujukan.PoliRujukan.Kode)
 	if poli.KdPoliBpjs != "" {
@@ -247,6 +253,64 @@ func (repo *Repository) DELETESKDP(nomorsurat string) *utils.HeadResponse {
 	return &res
 }
 
-func (repo *Repository) CreateRegis() {
+func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
+	pasien := repo.GetPasienByNIK(req.Nik)
+	now := time.Now().UTC()
+	regpriks := new(models.RegPeriksa)
+	regpriks.NoRawat, regpriks.NoReg = repo.GenerateNoRawat(req.KdPoli, req.KodeDokter)
+	regpriks.KdDokter = req.KodeDokter
+	regpriks.AlmtPj = pasien.Alamatpj
+	regpriks.BiayaReg = 0
+	regpriks.KdDokter = req.KodeDokter
+	regpriks.KdPoli = req.KdPoli
+	regpriks.NoRkmMedis = req.NoMR
+	regpriks.PJawab = pasien.Namakeluarga
+	regpriks.Hubunganpj = pasien.Keluarga
+	regpriks.StatusBayar = "Belum Bayar"
+	regpriks.StatusLanjut = "Ralan"
+	regpriks.KdPj = "BPJ"
+	regpriks.JamReg = now.Format("hh:mm:ss")
+	regpriks.TglRegistrasi = now.Format(utils.YYYYMMDD)
+	regpriks.Sttsumur = "Th"
+	regpriks.Stts = "Belum"
+	if pasien.Tgl_daftar.Format(utils.YYYYMMDD) == now.Format(utils.YYYYMMDD) {
+		regpriks.SttsDaftar = "Baru"
+		regpriks.StatusPoli = "Baru"
+	} else {
+		regpriks.SttsDaftar = "Lama"
+		regpriks.StatusPoli = "Lama"
+	}
+	fmt.Print(req.UmurSaatPelayanan)
+	regpriks.Umurdaftar = 0
 
+}
+
+func (repo *Repository) GenerateNoRawat(kodepoli, kodedokter string) (string, string) {
+	godotenv.Load()
+	fomatNum := os.Getenv("FORMAT_NUMBER")
+	norawat := ""
+	noreg := ""
+	now := time.Now().UTC()
+	date := now.Format(utils.YYYYMMDD1)
+	switch fomatNum {
+	case "poli":
+		num, _ := strconv.Atoi(repo.GetLastNoRawat(kodepoli, kodedokter))
+		norawat = fmt.Sprintf("%s/%s/%04d", date, kodepoli, num+1)
+		noreg = fmt.Sprintf("%3d", num+1)
+
+	case "dokter + poli":
+		num, _ := strconv.Atoi(repo.GetLastNoRawat(kodepoli, kodedokter))
+		norawat = fmt.Sprintf("%s/%s/%s/%04d", date, kodedokter, kodepoli, num+1)
+		noreg = fmt.Sprintf("%03d", num+1)
+	}
+	return norawat, noreg
+}
+
+func (repo *Repository) GetLastNoRawat(kodepoli, kodedokter string) string {
+	var norawat string
+	if kodedokter != "" {
+		repo.db.Model(&models.RegPeriksa{}).Select("ifnull(MAX(CONVERT(reg_periksa.no_reg,signed)),0) as norawat").Where("kd_poli=? and kd_dokter=? and reg_periksa.tgl_registrasi=Now()", kodepoli, kodedokter).Scan(&norawat)
+	}
+	repo.db.Model(&models.RegPeriksa{}).Select("ifnull(MAX(CONVERT(reg_periksa.no_reg,signed)),0) as norawat").Where("kd_poli=? and reg_periksa.tgl_registrasi=Now()", kodepoli).Scan(&norawat)
+	return norawat
 }

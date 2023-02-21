@@ -5,6 +5,7 @@ import { useForm } from "@inertiajs/react";
 import { useBucket } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { Option, Select } from "../components/SelectInput";
+import {CreateRegis} from "../../wailsjs/go/repository/Repository"
 export default function Pendaftaran() {
     const { user } = useBucket()
     const navigate = useNavigate();
@@ -45,11 +46,10 @@ export default function Pendaftaran() {
         setData(event.target.name, event.target.value)
     }
     const handleSubmit = () => {
-        // SearchRujukan(data.no_rujukan,data.no_ka).then((response)=>{
-        //     console.log(response)
-        //     setUser(response)
-        //     handleReset()
-        // })
+        
+        CreateRegis(data).then((resp)=>{
+            
+        })
 
     }
     let listdokter
@@ -68,7 +68,7 @@ export default function Pendaftaran() {
                 noMR: data?.peserta?.mr?.noMR,
                 noTelepon: data?.peserta?.mr?.noTelepon,
                 tglLahir: data?.peserta?.tglLahir,
-                alamat: '',
+                alamat: data?.peserta?.alamat,
                 kdPPK: data?.provPerujuk?.kode,
                 nmProvider: data?.provPerujuk?.nama,
                 hakKelas: data?.peserta?.hakKelas?.keterangan,
@@ -82,6 +82,8 @@ export default function Pendaftaran() {
                 nmPoli: data?.poliRujukan?.nama,
                 jnsPelayanan: data?.pelayanan?.nama,
                 kodeJnsPelayanan: data?.pelayanan?.kode,
+                umurSaatPelayanan:data?.peserta?.umur?.umurSaatPelayanan,
+                umurSekarang:data?.peserta?.umur?.umurSekarang,
                 listDokter: user?.listdokter.list,
                 skdp:user?.skdp
             })
@@ -275,7 +277,9 @@ export default function Pendaftaran() {
                                 onChange={handleOnChange}
                                 value={data.tujuanKunj}
                                 error={errors.tujuanKunj}
+                                label={"Tujuan Kunjungan"}
                             >
+                                 <Option value={""}> - </Option>
                                 <Option value={"0"}>Normal</Option>
                                 <Option value={"1"}>Prosedur</Option>
                                 <Option value={"2"}>Konsul Dokter</Option>
@@ -288,19 +292,25 @@ export default function Pendaftaran() {
                                 onChange={handleOnChange}
                                 value={data.flagProcedure}
                                 error={errors.flagProcedure}
+                                label={"Flag Prosedur"}
                             >
+                                <Option value={""}> - </Option>
                                 <Option value={"0"}>Prosedur Tidak Berkelanjutan</Option>
                                 <Option value={"1"}>Prosedur dan Terapi Berkelanjutan</Option>
                             </Select>
                         </div>
                     </div>
                     <div className="grid md:grid-cols-3 md:gap-6 items-center">
+                    <div>
+                    <div className="mb-1" />
                         <Select
-                            name="flagProcedure"
+                            name="kdPenunjang"
                             onChange={handleOnChange}
-                            value={data.flagProcedure}
-                            error={errors.flagProcedure}
+                            value={data.kdPenunjang}
+                            error={errors.kdPenunjang}
+                            label={"Kode Penunjang"}
                         >
+                            <Option value={""}> - </Option>
                             <Option value={"1"}>Radioterapi</Option>
                             <Option value={"2"}>Kemoterapi</Option>
                             <Option value={"3"}>Rehabilitasi Medik</Option>
@@ -314,18 +324,24 @@ export default function Pendaftaran() {
                             <Option value={"11"}>MRI</Option>
                             <Option value={"12"}>HEMODIALISA</Option>
                         </Select>
+                        </div>
+                        <div>
+                        <div className="mb-1" />
                         <Select
                             name="assesmentPel"
                             onChange={handleOnChange}
                             value={data.assesmentPel}
                             error={errors.assesmentPel}
+                            label={"Assesment Pelayanan"}
                         >
+                             <Option value={""}> - </Option>
                             <Option value={"1"}>Poli spesialis tidak tersedia pada hari sebelumnya</Option>
                             <Option value={"2"}>Jam Poli telah berakhir pada hari sebelumnya</Option>
                             <Option value={"3"}>Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</Option>
                             <Option value={"4"}>Atas Instruksi RS</Option>
                             <Option value={"5"}>Tujuan Kontrol</Option>
                         </Select>
+                        </div>
                     </div>
                 </>
             )

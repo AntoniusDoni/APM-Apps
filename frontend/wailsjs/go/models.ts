@@ -16,6 +16,108 @@ export namespace models {
 	        this.nm_poli_bpjs = source["nm_poli_bpjs"];
 	    }
 	}
+	export class Pasien {
+	    no_rkm_medis?: string;
+	    nm_pasien?: string;
+	    no_ktp?: string;
+	    jk?: string;
+	    tmp_lahir?: string;
+	    // Go type: time.Time
+	    tgl_lahir?: any;
+	    nm_ibu?: string;
+	    alamat?: string;
+	    gol_darah?: string;
+	    pekerjaan?: string;
+	    stts_nikah?: string;
+	    agama?: string;
+	    // Go type: time.Time
+	    tgl_daftar?: any;
+	    no_tlp?: string;
+	    umur?: string;
+	    pnd?: string;
+	    keluarga?: string;
+	    namakeluarga?: string;
+	    kd_pj?: string;
+	    no_peserta?: string;
+	    kd_kel?: number;
+	    kd_kec?: number;
+	    kd_kab?: number;
+	    pekerjaanpj?: string;
+	    alamatpj?: string;
+	    kelurahanpj?: string;
+	    kecamatanpj?: string;
+	    kabupatenpj?: string;
+	    perusahaan_pasien?: string;
+	    suku_bangsa?: number;
+	    bahasa_pasien?: number;
+	    cacat_fisik?: number;
+	    email?: string;
+	    nip?: string;
+	    kd_prop?: number;
+	    propinsipj?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Pasien(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.no_rkm_medis = source["no_rkm_medis"];
+	        this.nm_pasien = source["nm_pasien"];
+	        this.no_ktp = source["no_ktp"];
+	        this.jk = source["jk"];
+	        this.tmp_lahir = source["tmp_lahir"];
+	        this.tgl_lahir = this.convertValues(source["tgl_lahir"], null);
+	        this.nm_ibu = source["nm_ibu"];
+	        this.alamat = source["alamat"];
+	        this.gol_darah = source["gol_darah"];
+	        this.pekerjaan = source["pekerjaan"];
+	        this.stts_nikah = source["stts_nikah"];
+	        this.agama = source["agama"];
+	        this.tgl_daftar = this.convertValues(source["tgl_daftar"], null);
+	        this.no_tlp = source["no_tlp"];
+	        this.umur = source["umur"];
+	        this.pnd = source["pnd"];
+	        this.keluarga = source["keluarga"];
+	        this.namakeluarga = source["namakeluarga"];
+	        this.kd_pj = source["kd_pj"];
+	        this.no_peserta = source["no_peserta"];
+	        this.kd_kel = source["kd_kel"];
+	        this.kd_kec = source["kd_kec"];
+	        this.kd_kab = source["kd_kab"];
+	        this.pekerjaanpj = source["pekerjaanpj"];
+	        this.alamatpj = source["alamatpj"];
+	        this.kelurahanpj = source["kelurahanpj"];
+	        this.kecamatanpj = source["kecamatanpj"];
+	        this.kabupatenpj = source["kabupatenpj"];
+	        this.perusahaan_pasien = source["perusahaan_pasien"];
+	        this.suku_bangsa = source["suku_bangsa"];
+	        this.bahasa_pasien = source["bahasa_pasien"];
+	        this.cacat_fisik = source["cacat_fisik"];
+	        this.email = source["email"];
+	        this.nip = source["nip"];
+	        this.kd_prop = source["kd_prop"];
+	        this.propinsipj = source["propinsipj"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 
 }
 
@@ -322,6 +424,76 @@ export namespace utils {
 	        this.persentase = source["persentase"];
 	    }
 	}
+	export class RequestPendaftaran {
+	    no_ka?: string;
+	    no_rujukan?: string;
+	    tglKunjungan?: string;
+	    nama?: string;
+	    nik?: string;
+	    noMR?: string;
+	    noTelepon?: string;
+	    tglLahir?: string;
+	    alamat?: string;
+	    kdPPK?: string;
+	    nmProvider?: string;
+	    hakKelas?: string;
+	    kodeKelas?: string;
+	    jenisPeserta?: string;
+	    status?: string;
+	    prolanisPRB?: string;
+	    kdicd?: string;
+	    nmIcd?: string;
+	    kdPoli?: string;
+	    nmPoli?: string;
+	    jnsPelayanan?: string;
+	    kodeJnsPelayanan?: string;
+	    umurSekarang?: string;
+	    umurSaatPelayanan: string;
+	    kodeDokter?: string;
+	    skdp?: string;
+	    tujuanKunj?: string;
+	    flagProcedure?: string;
+	    assesmentPel?: string;
+	    kdPenunjang?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new RequestPendaftaran(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.no_ka = source["no_ka"];
+	        this.no_rujukan = source["no_rujukan"];
+	        this.tglKunjungan = source["tglKunjungan"];
+	        this.nama = source["nama"];
+	        this.nik = source["nik"];
+	        this.noMR = source["noMR"];
+	        this.noTelepon = source["noTelepon"];
+	        this.tglLahir = source["tglLahir"];
+	        this.alamat = source["alamat"];
+	        this.kdPPK = source["kdPPK"];
+	        this.nmProvider = source["nmProvider"];
+	        this.hakKelas = source["hakKelas"];
+	        this.kodeKelas = source["kodeKelas"];
+	        this.jenisPeserta = source["jenisPeserta"];
+	        this.status = source["status"];
+	        this.prolanisPRB = source["prolanisPRB"];
+	        this.kdicd = source["kdicd"];
+	        this.nmIcd = source["nmIcd"];
+	        this.kdPoli = source["kdPoli"];
+	        this.nmPoli = source["nmPoli"];
+	        this.jnsPelayanan = source["jnsPelayanan"];
+	        this.kodeJnsPelayanan = source["kodeJnsPelayanan"];
+	        this.umurSekarang = source["umurSekarang"];
+	        this.umurSaatPelayanan = source["umurSaatPelayanan"];
+	        this.kodeDokter = source["kodeDokter"];
+	        this.skdp = source["skdp"];
+	        this.tujuanKunj = source["tujuanKunj"];
+	        this.flagProcedure = source["flagProcedure"];
+	        this.assesmentPel = source["assesmentPel"];
+	        this.kdPenunjang = source["kdPenunjang"];
+	    }
+	}
 	export class RequestSKDP {
 	    noSEP?: string;
 	    kodeDokter?: string;
@@ -485,7 +657,7 @@ export namespace utils {
 	    noKunjungan?: string;
 	    // Go type: struct { Kode string "json:\"kode,omitempty\""; Nama string "json:\"nama,omitempty\"" }
 	    pelayanan?: any;
-	    // Go type: struct { Cob struct { NmAsuransi interface {} "json:\"nmAsuransi,omitempty\""; NoAsuransi interface {} "json:\"noAsuransi,omitempty\""; TglTAT interface {} "json:\"tglTAT,omitempty\""; TglTMT interface {} "json:\"tglTMT,omitempty\"" } "json:\"cob,omitempty\""; HakKelas struct { Keterangan string "json:\"keterangan,omitempty\""; Kode string "json:\"kode,omitempty\"" } "json:\"hakKelas,omitempty\""; Informasi struct { Dinsos interface {} "json:\"dinsos,omitempty\""; NoSKTM interface {} "json:\"noSKTM,omitempty\""; ProlanisPRB interface {} "json:\"prolanisPRB,omitempty\"" } "json:\"informasi,omitempty\""; JenisPeserta struct { Keterangan string "json:\"keterangan,omitempty\""; Kode string "json:\"kode,omitempty\"" } "json:\"jenisPeserta,omitempty\""; Mr struct { NoMR string "json:\"noMR,omitempty\""; NoTelepon interface {} "json:\"noTelepon,omitempty\"" } "json:\"mr,omitempty\""; Nama string "json:\"nama,omitempty\""; Nik string "json:\"nik,omitempty\""; NoKartu string "json:\"noKartu,omitempty\""; Pisa string "json:\"pisa,omitempty\""; ProvUmum struct { KdProvider string "json:\"kdProvider,omitempty\""; NmProvider string "json:\"nmProvider,omitempty\"" } "json:\"provUmum,omitempty\""; Sex string "json:\"sex,omitempty\""; StatusPeserta struct { Keterangan string "json:\"keterangan,omitempty\""; Kode string "json:\"kode,omitempty\"" } "json:\"statusPeserta,omitempty\""; TglCetakKartu string "json:\"tglCetakKartu,omitempty\""; TglLahir string "json:\"tglLahir,omitempty\""; TglTAT string "json:\"tglTAT,omitempty\""; TglTMT string "json:\"tglTMT,omitempty\""; Umur struct { UmurSaatPelayanan string "json:\"umurSaatPelayanan,omitempty\""; UmurSekarang string "json:\"umurSekarang,omitempty\"" } "json:\"umur,omitempty\"" }
+	    // Go type: struct { Cob struct { NmAsuransi interface {} "json:\"nmAsuransi,omitempty\""; NoAsuransi interface {} "json:\"noAsuransi,omitempty\""; TglTAT interface {} "json:\"tglTAT,omitempty\""; TglTMT interface {} "json:\"tglTMT,omitempty\"" } "json:\"cob,omitempty\""; HakKelas struct { Keterangan string "json:\"keterangan,omitempty\""; Kode string "json:\"kode,omitempty\"" } "json:\"hakKelas,omitempty\""; Informasi struct { Dinsos interface {} "json:\"dinsos,omitempty\""; NoSKTM interface {} "json:\"noSKTM,omitempty\""; ProlanisPRB interface {} "json:\"prolanisPRB,omitempty\"" } "json:\"informasi,omitempty\""; JenisPeserta struct { Keterangan string "json:\"keterangan,omitempty\""; Kode string "json:\"kode,omitempty\"" } "json:\"jenisPeserta,omitempty\""; Mr struct { NoMR string "json:\"noMR,omitempty\""; NoTelepon interface {} "json:\"noTelepon,omitempty\"" } "json:\"mr,omitempty\""; Nama string "json:\"nama,omitempty\""; Nik string "json:\"nik,omitempty\""; NoKartu string "json:\"noKartu,omitempty\""; Pisa string "json:\"pisa,omitempty\""; Alamat string "json:\"alamat,omitempty\""; ProvUmum struct { KdProvider string "json:\"kdProvider,omitempty\""; NmProvider string "json:\"nmProvider,omitempty\"" } "json:\"provUmum,omitempty\""; Sex string "json:\"sex,omitempty\""; StatusPeserta struct { Keterangan string "json:\"keterangan,omitempty\""; Kode string "json:\"kode,omitempty\"" } "json:\"statusPeserta,omitempty\""; TglCetakKartu string "json:\"tglCetakKartu,omitempty\""; TglLahir string "json:\"tglLahir,omitempty\""; TglTAT string "json:\"tglTAT,omitempty\""; TglTMT string "json:\"tglTMT,omitempty\""; Umur struct { UmurSaatPelayanan string "json:\"umurSaatPelayanan,omitempty\""; UmurSekarang string "json:\"umurSekarang,omitempty\"" } "json:\"umur,omitempty\"" }
 	    peserta?: any;
 	    // Go type: struct { Kode string "json:\"kode,omitempty\""; Nama string "json:\"nama,omitempty\"" }
 	    poliRujukan?: any;

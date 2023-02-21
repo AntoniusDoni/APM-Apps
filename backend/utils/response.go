@@ -57,6 +57,7 @@ type Rujukan struct {
 		Nik      string `json:"nik,omitempty"`
 		NoKartu  string `json:"noKartu,omitempty"`
 		Pisa     string `json:"pisa,omitempty"`
+		Alamat   string `json:"alamat,omitempty"`
 		ProvUmum struct {
 			KdProvider string `json:"kdProvider,omitempty"`
 			NmProvider string `json:"nmProvider,omitempty"`

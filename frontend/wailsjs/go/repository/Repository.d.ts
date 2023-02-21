@@ -5,13 +5,17 @@ import {models} from '../models';
 import {context} from '../models';
 import {gorm} from '../models';
 
-export function CreateRegis():Promise<void>;
+export function CreateRegis(arg1:utils.RequestPendaftaran):Promise<void>;
 
 export function CreateSKDP(arg1:utils.RequestSKDP):Promise<utils.ResponseCreateSKDP>;
 
 export function DELETESKDP(arg1:string):Promise<utils.HeadResponse>;
 
+export function GenerateNoRawat(arg1:string,arg2:string):Promise<string|string>;
+
 export function GetKodePoliBPJS(arg1:string):Promise<utils.ListPoli>;
+
+export function GetLastNoRawat(arg1:string,arg2:string):Promise<string>;
 
 export function GetListDockterBPJS(arg1:string):Promise<utils.ListDokterBpjs>;
 
@@ -20,6 +24,8 @@ export function GetListDokterKontrol(arg1:string,arg2:string,arg3:string):Promis
 export function GetListPoli(arg1:string):Promise<Array<models.MapingPoliBpjs>>;
 
 export function GetMapPoli(arg1:string):Promise<models.MapingPoliBpjs>;
+
+export function GetPasienByNIK(arg1:string):Promise<models.Pasien>;
 
 export function GetPoliKontrolBPJS(arg1:string,arg2:string,arg3:string):Promise<utils.ListPoliKontrol>;
 
@@ -33,6 +39,6 @@ export function SearchPasien(arg1:string,arg2:string):Promise<utils.ResponseSear
 
 export function SearchRujukanByNoKa(arg1:string,arg2:string):Promise<utils.ResponseSearchRujukan>;
 
-export function SearchRujukanByNorujukan(arg1:string,arg2:string):Promise<utils.ResponseSearchRujukan>;
+export function SearchRujukanByNorujukan(arg1:string,arg2:string,arg3:string):Promise<utils.ResponseSearchRujukan>;
 
 export function Setup(arg1:context.Context,arg2:gorm.DB):Promise<void>;

@@ -106,3 +106,41 @@ type DeleteSKDP struct {
 		Tsurat TSuratkontrol `json:"t_suratkontrol"`
 	} `json:"request"`
 }
+
+type RequestPendaftaran struct {
+	NoKa              string `json:"no_ka,omitempty"`
+	NoRujukan         string `json:"no_rujukan,omitempty"`
+	TglKunjungan      string `json:"tglKunjungan,omitempty"`
+	Nama              string `json:"nama,omitempty"`
+	Nik               string `json:"nik,omitempty"`
+	NoMR              string `json:"noMR,omitempty"`
+	NoTelepon         string `json:"noTelepon,omitempty"`
+	TglLahir          string `json:"tglLahir,omitempty"`
+	Alamat            string `json:"alamat,omitempty"`
+	KdPPK             string `json:"kdPPK,omitempty"`
+	NmProvider        string `json:"nmProvider,omitempty"`
+	HakKelas          string `json:"hakKelas,omitempty"`
+	KodeKelas         string `json:"kodeKelas,omitempty"`
+	JenisPeserta      string `json:"jenisPeserta,omitempty"`
+	Status            string `json:"status,omitempty"`
+	ProlanisPRB       string `json:"prolanisPRB,omitempty"`
+	Kdicd             string `json:"kdicd,omitempty"`
+	NmIcd             string `json:"nmIcd,omitempty"`
+	KdPoli            string `json:"kdPoli,omitempty"`
+	NmPoli            string `json:"nmPoli,omitempty"`
+	JnsPelayanan      string `json:"jnsPelayanan,omitempty"`
+	KodeJnsPelayanan  string `json:"kodeJnsPelayanan,omitempty"`
+	UmurSekarang      string `json:"umurSekarang,omitempty"`
+	UmurSaatPelayanan string `json:"umurSaatPelayanan"`
+	KodeDokter        string `json:"kodeDokter,omitempty"`
+	Skdp              string `json:"skdp,omitempty"`
+	TujuanKunj        string `json:"tujuanKunj,omitempty"`
+	FlagProcedure     string `json:"flagProcedure,omitempty"`
+	AssesmentPel      string `json:"assesmentPel,omitempty"`
+	KdPenunjang       string `json:"kdPenunjang,omitempty"`
+}
+
+type CheckPasien struct {
+	Isexists bool
+	Alamat   string
+}

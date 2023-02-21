@@ -23,7 +23,7 @@ func NewDb(ctx context.Context) *gorm.DB {
 		os.Getenv("DB_Port"),
 		os.Getenv("DB_Name"),
 	)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Silent), NamingStrategy: schema.NamingStrategy{SingularTable: true}})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info), NamingStrategy: schema.NamingStrategy{SingularTable: true}})
 	if err != nil {
 		runtime.LogDebug(ctx, "DB CONNECT ERROR")
 		return nil
