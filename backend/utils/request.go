@@ -101,3 +101,8 @@ type RequestSKDP struct {
 type InsertSKDP struct {
 	Request SKDP `json:"request"`
 }
+type DeleteSKDP struct {
+	Request struct {
+		Tsurat TSuratkontrol `json:"t_suratkontrol"`
+	} `json:"request"`
+}

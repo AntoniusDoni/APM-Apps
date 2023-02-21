@@ -5,11 +5,17 @@ import {models} from '../models';
 import {context} from '../models';
 import {gorm} from '../models';
 
+export function CreateRegis():Promise<void>;
+
 export function CreateSKDP(arg1:utils.RequestSKDP):Promise<utils.ResponseCreateSKDP>;
+
+export function DELETESKDP(arg1:string):Promise<utils.HeadResponse>;
 
 export function GetKodePoliBPJS(arg1:string):Promise<utils.ListPoli>;
 
 export function GetListDockterBPJS(arg1:string):Promise<utils.ListDokterBpjs>;
+
+export function GetListDokterKontrol(arg1:string,arg2:string,arg3:string):Promise<utils.ListDokterKontrol>;
 
 export function GetListPoli(arg1:string):Promise<Array<models.MapingPoliBpjs>>;
 

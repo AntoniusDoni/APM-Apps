@@ -15,7 +15,7 @@ func (repo *Repository) GetListPoli(idpoli string) []*models.MapingPoliBpjs {
 }
 func (repo *Repository) GetMapPoli(idpoli string) *models.MapingPoliBpjs {
 	listpoli := new(models.MapingPoliBpjs)
-	fmt.Println("Kode poli", idpoli)
+	// fmt.Println("Kode poli", idpoli)
 	repo.db.Where("kd_poli_bpjs=?", idpoli).Find(&listpoli)
 	return listpoli
 }

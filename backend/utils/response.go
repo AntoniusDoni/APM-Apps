@@ -143,6 +143,7 @@ type ListDokterBpjs struct {
 		Nama string `json:"nama,omitempty"`
 	} `json:"list,omitempty"`
 }
+
 type HeadResponse struct {
 	Code    string `json:"code,omitempty"`
 	Message string `json:"message,omitempty"`
@@ -198,6 +199,7 @@ type ResponseListHistory struct {
 }
 type ResponseCreateSKDP struct {
 	MetaData HeadResponse `json:"metaData"`
+	Response ListSKDP     `json:"response"`
 }
 
 type History struct {
@@ -237,6 +239,49 @@ type ListPoliKontrol struct {
 	Response struct {
 		List []PoliKontrol `json:"list"`
 	} `json:"response"`
+}
+type ListDokterKontrol struct {
+	MetaData HeadResponse          `json:"metaData"`
+	List     []DaftarDokterKontrol `json:"list,omitempty"`
+}
+type DaftarDokterKontrol struct {
+	KodeDokter    string `json:"kodeDokter"`
+	NamaDokter    string `json:"namaDokter"`
+	JadwalPraktek string `json:"jadwalPraktek"`
+	Kapasitas     string `json:"kapasitas"`
+}
+
+type ResposeSEP struct {
+	MetaData HeadResponse `json:"metaData"`
+	Response struct {
+		SEP Sep `json:"sep,omitempty"`
+	} `json:"response,omitempty"`
+}
+type Sep struct {
+	Catatan      string `json:"catatan,omitempty"`
+	Diagnosa     string `json:"diagnosa,omitempty"`
+	JnsPelayanan string `json:"jnsPelayanan,omitempty"`
+	KelasRawat   string `json:"kelasRawat,omitempty"`
+	NoSep        string `json:"noSep,omitempty"`
+	Penjamin     string `json:"penjamin,omitempty"`
+	Peserta      struct {
+		Asuransi   string `json:"asuransi,omitempty"`
+		HakKelas   string `json:"hakKelas,omitempty"`
+		JnsPeserta string `json:"jnsPeserta,omitempty"`
+		Kelamin    string `json:"kelamin,omitempty"`
+		Nama       string `json:"nama,omitempty"`
+		NoKartu    string `json:"noKartu,omitempty"`
+		NoMr       string `json:"noMr,omitempty"`
+		TglLahir   string `json:"tglLahir,omitempty"`
+	} `json:"peserta,omitempty"`
+	Informasi struct {
+		Dinsos      interface{} `json:"Dinsos,omitempty"`
+		ProlanisPRB interface{} `json:"prolanisPRB,omitempty"`
+		NoSKTM      interface{} `json:"noSKTM,omitempty"`
+	} `json:"informasi:,omitempty"`
+	Poli          string `json:"poli,omitempty"`
+	PoliEksekutif string `json:"poliEksekutif,omitempty"`
+	TglSep        string `json:"tglSep,omitempty"`
 }
 
 func ParseStrigDate(tanggal string) (string, error) {

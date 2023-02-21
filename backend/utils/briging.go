@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -174,7 +173,7 @@ func GETBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, error
 	return &ResponseBriging{MetaData: resBody.MetaData, Body: []byte(decyptRes)}, nil
 }
 
-func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, error) {
+func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration, methode string) (*ResponseBriging, error) {
 
 	godotenv.Load()
 	constid := os.Getenv("CONST_ID")
@@ -188,7 +187,7 @@ func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, erro
 	xTimestamp := int(nowDate.Sub(secondDate).Seconds())
 	x := fmt.Sprintf("%s&%d", constid, xTimestamp)
 	encodedSignature := GenerateHMAC256(Secretkey, x)
-	req, err := http.NewRequest("POST", reqinf.URL, bytes.NewReader(reqinf.Body))
+	req, err := http.NewRequest(methode, reqinf.URL, bytes.NewReader(reqinf.Body))
 	if err != nil {
 		return nil, err
 	}
@@ -201,13 +200,13 @@ func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, erro
 		Timeout: timeout,
 	}
 
-	decoder := json.NewDecoder(req.Body)
-	var t InsertSKDP
-	err = decoder.Decode(&t)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(t.Request)
+	// decoder := json.NewDecoder(req.Body)
+	// var t InsertSKDP
+	// err = decoder.Decode(&t)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// log.Println()
 
 	res, err := cl.Do(req)
 
@@ -224,6 +223,7 @@ func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration) (*ResponseBriging, erro
 		return nil, err
 	}
 	key := fmt.Sprintf("%s%s%d", constid, Secretkey, xTimestamp)
+	// fmt.Println(string(buf))
 	var resBody ResposeBodyBriging
 	json.Unmarshal(buf, &resBody)
 	if resBody.MetaData.Code != "200" {

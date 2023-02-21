@@ -5,6 +5,7 @@ import (
 	"changeme/backend/utils"
 	"encoding/json"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -156,20 +157,19 @@ func (repo *Repository) ListSKDP(no_ka, tanggal string) *utils.ResponseListSKDP 
 }
 
 func (repo *Repository) ListHistory(tglmulai, tglakhir, no_ka string) *utils.ResponseListHistory {
-	layout := "2006-01-02T15:04:05.000Z"
-	dateStart, err := time.Parse(layout, tglmulai)
+	dateStart, err := utils.ParseStrigDate(tglmulai)
 	if err != nil {
 		return &utils.ResponseListHistory{
 			MetaData: utils.HeadResponse{Code: "503", Message: utils.Failed},
 		}
 	}
-	dateEnd, err := time.Parse(layout, tglakhir)
+	dateEnd, err := utils.ParseStrigDate(tglakhir)
 	if err != nil {
 		return &utils.ResponseListHistory{
 			MetaData: utils.HeadResponse{Code: "503", Message: utils.Failed},
 		}
 	}
-	urlreq := fmt.Sprintf(utils.GET_LIST_HISTORY, utils.GET_CLAIM, no_ka, dateStart.Format(utils.YYYYMMDD), dateEnd.Format(utils.YYYYMMDD))
+	urlreq := fmt.Sprintf(utils.GET_LIST_HISTORY, utils.GET_CLAIM, no_ka, dateStart, dateEnd)
 	resBpjs, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlreq}, 30*time.Second)
 	var res utils.ResponseListHistory
 	if err != nil {
@@ -184,24 +184,69 @@ func (repo *Repository) ListHistory(tglmulai, tglakhir, no_ka string) *utils.Res
 }
 
 func (repo *Repository) CreateSKDP(req *utils.RequestSKDP) *utils.ResponseCreateSKDP {
-	fmt.Println("sep", req.NoSEP, "kodepoli", req.PoliKontrol, "nmpoli", req.NmPoliBpjs, "kodedokter", req.KodeDokter, "tgl", req.TglRencanaKontrol)
+	tglrecana, _ := utils.ParseStrigDate(req.TglRencanaKontrol)
+	now := time.Now().UTC()
+	date := now.Format(utils.YYYYMMDD)
 
-	// requestbody := new(utils.InsertSKDP)
-	// layout := "2006-01-02T15:04:05.000Z"
-	// dateStart, err := time.Parse(layout, req.TglRencanaKontrol)
-	// if err != nil {
-	// 	return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: "503", Message: utils.Failed}}
-	// }
-	// fmt.Println(req)
-	// req.TglRencanaKontrol = dateStart.Format(utils.YYYYMMDD)
-	// req.User = "Admin APM"
-	// requestbody.Request = *req
-	// UrlCreateSKDP := fmt.Sprintf(utils.INSERTSKDP, utils.GET_CLAIM)
-	// reqbyte, err := json.Marshal(requestbody)
-	// resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: UrlCreateSKDP, Body: reqbyte}, 30*time.Second)
-	// if err != nil {
-	// 	return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: resBpjs.MetaData.Code, Message: resBpjs.MetaData.Message}}
-	// }
-	// return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: resBpjs.MetaData.Code, Message: resBpjs.MetaData.Message}}
-	return &utils.ResponseCreateSKDP{MetaData: utils.HeadResponse{Code: "200", Message: utils.SUCSSES}}
+	requestbody := new(utils.InsertSKDP)
+	requestbody.Request.KodeDokter = req.KodeDokter
+	requestbody.Request.NoSEP = req.NoSEP
+	requestbody.Request.PoliKontrol = req.PoliKontrol
+	requestbody.Request.TglRencanaKontrol = tglrecana
+	requestbody.Request.User = "Admin APM"
+
+	UrlCreateSKDP := fmt.Sprintf(utils.INSERTSKDP, utils.GET_CLAIM)
+	reqbyte, err := json.Marshal(requestbody)
+	resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: UrlCreateSKDP, Body: reqbyte}, 30*time.Second, "POST")
+	var res utils.ResponseCreateSKDP
+	json.Unmarshal(resBpjs.Body, &res.Response)
+	res.MetaData.Code = resBpjs.MetaData.Code
+	res.MetaData.Message = resBpjs.MetaData.Message
+	if err != nil {
+		return &res
+	}
+	if resBpjs.MetaData.Code == "200" {
+		skdpdb := new(models.BridgingSuratKontrolBpjs)
+		skdpdb.KdDokterBpjs = req.KodeDokter
+		skdpdb.KdPoliBpjs = req.PoliKontrol
+		skdpdb.NmDokterBpjs = req.NmDokterBpjs
+		skdpdb.NmPoliBpjs = req.NmPoliBpjs
+		skdpdb.NoSEP = req.NoSEP
+		skdpdb.NoSurat = res.Response.NoSuratKontrol
+		skdpdb.TglRencana = tglrecana
+		skdpdb.TglSurat = date
+		errs := repo.db.Create(skdpdb).Error
+		if errs != nil {
+			// fmt.Println(errs)
+			log.Println(errs)
+			return &res
+
+		}
+		return &res
+	}
+
+	return &res
+
+}
+
+func (repo *Repository) DELETESKDP(nomorsurat string) *utils.HeadResponse {
+
+	urlReq := fmt.Sprintf(utils.DELETE_SKDP, utils.GET_CLAIM)
+	requestbody := new(utils.DeleteSKDP)
+	requestbody.Request.Tsurat.NoSuratKontrol = nomorsurat
+	requestbody.Request.Tsurat.User = "Admin"
+
+	reqbyte, err := json.Marshal(requestbody)
+	resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: urlReq, Body: reqbyte}, 30*time.Second, "DELETE")
+	var res utils.HeadResponse
+	res.Code = resBpjs.MetaData.Code
+	res.Message = resBpjs.MetaData.Message
+	if err != nil {
+		return &res
+	}
+	return &res
+}
+
+func (repo *Repository) CreateRegis() {
+
 }

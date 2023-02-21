@@ -5,7 +5,7 @@ import Button from "../components/Button";
 import FormInput from "../components/FormInput";
 import { Option, Select } from "../components/SelectInput";
 import FormInputDate from "../components/FormInputDate"
-import { GetPoliKontrolBPJS, GetListDockterBPJS,CreateSKDP } from "../../wailsjs/go/repository/Repository"
+import { GetPoliKontrolBPJS, GetListDokterKontrol,CreateSKDP } from "../../wailsjs/go/repository/Repository"
 import {defaultdockter} from '../utils/helper'
 import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading"
@@ -42,24 +42,37 @@ export default function ModalSKDP(props) {
         modalState.toggle()
     }
     const handleOnChange = (event) => {
-        if(event.target.name=="poliKontrol"){
+        if(event.target.name=="poliKontrol"||event.target.name=="tglRencanaKontrol"){
             var index = event.nativeEvent.target.selectedIndex;
             var value=event.target.value;
-            setData({noSEP:data?.noSEP,noka:data.noka,namaPoli:event.nativeEvent.target[index].text,poliKontrol:value,tglRencanaKontrol:new Date()})
-            GetListDockterBPJS(event.target.value).then((resp)=>{
+            setData({noSEP:data?.noSEP,noka:data.noka,namaPoli:event.nativeEvent.target[index].text,poliKontrol:value,tglRencanaKontrol:data.tglRencanaKontrol})
+            GetListDokterKontrol(event.target.value,"2",data.tglRencanaKontrol).then((resp)=>{
                 if (resp?.list!=undefined){
                     setDokter(resp?.list)
                 }
             })
-        }else{
+        }else if(event.target.name=="kodeDokter") {
+            var index = event.nativeEvent.target.selectedIndex;
+            var value=event.target.value;
+            setData({noSEP:data?.noSEP,noka:data.noka,poliKontrol:data.poliKontrol,namaPoli:data.namaPoli,nmdokter:event.nativeEvent.target[index].text,kodeDokter:value,tglRencanaKontrol:data.tglRencanaKontrol})
+        }
+        else{
             setData(event.target.name, event.target.value)
         }
+    }
+    const handleOnChangeDate=(tgl,val)=>{
+        setData(tgl,val)
+        GetListDokterKontrol(data.poliKontrol,"2",val).then((resp)=>{
+            if (resp?.list!=undefined){
+                setDokter(resp?.list)
+            }
+        })
     }
     const handleSubmit = () => {
         setLoading(true)
         CreateSKDP(data).then((resp)=>{
             if (resp.metaData.code=="200"){
-                // navigate("/histrorykontrol/"+data.noka)
+                navigate("/histrorykontrol/"+data.noka)
             }else{
                 setMessage(resp.metaData.message)
                 toggle()
@@ -110,7 +123,9 @@ export default function ModalSKDP(props) {
                         label={"Poli"}>
                         <Option value={""}>-- Pilih Poli --</Option>
                         {
+                           
                             listPoli.map((list) => {
+                                
                                 return (
                                     <Option value={list.kodePoli}>{list.namaPoli}</Option>
                                 )
@@ -123,7 +138,7 @@ export default function ModalSKDP(props) {
                 <FormInputDate
                     label="Tanggal Rencana Kontrol"
                     selected={data.tglRencanaKontrol}
-                    onChange={(date) => setData('tglRencanaKontrol', date)}
+                    onChange={(date) => handleOnChangeDate('tglRencanaKontrol', date)}
                     format={"dd/MM/yyyy"}
                     minDate={new Date()}
                     error={errors.tglRencanaKontrol}
@@ -141,7 +156,7 @@ export default function ModalSKDP(props) {
                         {
                             listDokter.map((list) => {
                                 return (
-                                    <Option value={list?.kode}>{list?.nama}</Option>
+                                    <Option value={list?.kodeDokter}>{list?.namaDokter} {list?.jadwalPraktek} ({list?.kapasitas})</Option>
                                 )
                             })
                         }

@@ -21,6 +21,24 @@ export namespace models {
 
 export namespace utils {
 	
+	export class DaftarDokterKontrol {
+	    kodeDokter: string;
+	    namaDokter: string;
+	    jadwalPraktek: string;
+	    kapasitas: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DaftarDokterKontrol(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kodeDokter = source["kodeDokter"];
+	        this.namaDokter = source["namaDokter"];
+	        this.jadwalPraktek = source["jadwalPraktek"];
+	        this.kapasitas = source["kapasitas"];
+	    }
+	}
 	export class HeadResponse {
 	    code?: string;
 	    message?: string;
@@ -129,6 +147,38 @@ export namespace utils {
 		    return a;
 		}
 	}
+	export class ListDokterKontrol {
+	    metaData: HeadResponse;
+	    list?: DaftarDokterKontrol[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ListDokterKontrol(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.metaData = this.convertValues(source["metaData"], HeadResponse);
+	        this.list = this.convertValues(source["list"], DaftarDokterKontrol);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class Poli {
 	    kode: string;
 	    nama: string;
@@ -207,6 +257,50 @@ export namespace utils {
 		    return a;
 		}
 	}
+	export class ListSKDP {
+	    noSuratKontrol?: string;
+	    jnsPelayanan?: string;
+	    jnsKontrol?: string;
+	    namaJnsKontrol?: string;
+	    tglRencanaKontrol?: string;
+	    tglTerbitKontrol?: string;
+	    noSepAsalKontrol?: string;
+	    poliAsal?: string;
+	    namaPoliAsal?: string;
+	    poliTujuan?: string;
+	    namaPoliTujuan?: string;
+	    tglSEP?: string;
+	    kodeDokter?: string;
+	    namaDokter?: string;
+	    noKartu?: string;
+	    nama?: string;
+	    terbitSEP?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ListSKDP(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.noSuratKontrol = source["noSuratKontrol"];
+	        this.jnsPelayanan = source["jnsPelayanan"];
+	        this.jnsKontrol = source["jnsKontrol"];
+	        this.namaJnsKontrol = source["namaJnsKontrol"];
+	        this.tglRencanaKontrol = source["tglRencanaKontrol"];
+	        this.tglTerbitKontrol = source["tglTerbitKontrol"];
+	        this.noSepAsalKontrol = source["noSepAsalKontrol"];
+	        this.poliAsal = source["poliAsal"];
+	        this.namaPoliAsal = source["namaPoliAsal"];
+	        this.poliTujuan = source["poliTujuan"];
+	        this.namaPoliTujuan = source["namaPoliTujuan"];
+	        this.tglSEP = source["tglSEP"];
+	        this.kodeDokter = source["kodeDokter"];
+	        this.namaDokter = source["namaDokter"];
+	        this.noKartu = source["noKartu"];
+	        this.nama = source["nama"];
+	        this.terbitSEP = source["terbitSEP"];
+	    }
+	}
 	
 	export class PoliKontrol {
 	    kodePoli: string;
@@ -254,6 +348,7 @@ export namespace utils {
 	}
 	export class ResponseCreateSKDP {
 	    metaData: HeadResponse;
+	    response: ListSKDP;
 	
 	    static createFrom(source: any = {}) {
 	        return new ResponseCreateSKDP(source);
@@ -262,6 +357,7 @@ export namespace utils {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.metaData = this.convertValues(source["metaData"], HeadResponse);
+	        this.response = this.convertValues(source["response"], ListSKDP);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ListSKDP, SearchRujukanByNoKa } from "../../wailsjs/go/repository/Repository"
+import { ListSKDP, SearchRujukanByNoKa,DELETESKDP } from "../../wailsjs/go/repository/Repository"
 import Modal from "../components/Modal";
 import Loading from "../components/Loading"
 import { useForm } from "@inertiajs/react";
@@ -73,8 +73,13 @@ export default function HistoryKontrol() {
             .finally(() => setLoading(false))
     }
     const deleteSkdp = (noSuratKontrol) => {
-       
-        formModal.toggle()
+        DELETESKDP(noSuratKontrol).then((resp)=>{
+            console.log(resp)
+            setMessage(resp.message)
+            toggle()
+            formModal.toggle()
+            GelistSKDP()
+        })
     }
     useEffect(() => {
         if (data.tanggal != '' && data.no_ka != '')
