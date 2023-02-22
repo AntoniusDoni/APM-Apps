@@ -134,7 +134,7 @@ type RequestPendaftaran struct {
 	UmurSaatPelayanan string `json:"umurSaatPelayanan"`
 	KodeDokter        string `json:"kodeDokter,omitempty"`
 	Skdp              string `json:"skdp,omitempty"`
-	TujuanKunj        string `json:"tujuanKunj,omitempty"`
+	TujuanKunj        string `json:"tujuanKunj"`
 	FlagProcedure     string `json:"flagProcedure,omitempty"`
 	AssesmentPel      string `json:"assesmentPel,omitempty"`
 	KdPenunjang       string `json:"kdPenunjang,omitempty"`

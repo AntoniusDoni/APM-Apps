@@ -42,6 +42,10 @@ export function GetMapPoli(arg1) {
   return window['go']['repository']['Repository']['GetMapPoli'](arg1);
 }
 
+export function GetMapingDokterDpjpvclaim(arg1) {
+  return window['go']['repository']['Repository']['GetMapingDokterDpjpvclaim'](arg1);
+}
+
 export function GetPasienByNIK(arg1) {
   return window['go']['repository']['Repository']['GetPasienByNIK'](arg1);
 }

@@ -25,6 +25,8 @@ export function GetListPoli(arg1:string):Promise<Array<models.MapingPoliBpjs>>;
 
 export function GetMapPoli(arg1:string):Promise<models.MapingPoliBpjs>;
 
+export function GetMapingDokterDpjpvclaim(arg1:string):Promise<models.MapingDokterDpjpvclaim>;
+
 export function GetPasienByNIK(arg1:string):Promise<models.Pasien>;
 
 export function GetPoliKontrolBPJS(arg1:string,arg2:string,arg3:string):Promise<utils.ListPoliKontrol>;

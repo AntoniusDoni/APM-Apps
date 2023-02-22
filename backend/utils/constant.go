@@ -3,6 +3,7 @@ package utils
 const HMAC_TIMESTAMP_FORMAT = `2006-01-02 00:00:00`
 const YYYYMMDD = "2006-01-02"
 const YYYYMMDD1 = "2006/01/02"
+const FORMATDATE = "20060102"
 const (
 	GET_CLAIM               = "https://apijkn.bpjs-kesehatan.go.id/vclaim-rest/"
 	GET_BYNO_KARTU          = "%sPeserta/nokartu/%s/tglSEP/%s"

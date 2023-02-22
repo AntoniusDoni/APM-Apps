@@ -1,14 +1,12 @@
 package models
 
-import "time"
-
 type RegPeriksa struct {
 	NoReg         string  `gorm:"column:no_reg" json:"no_reg"`
 	NoRawat       string  `gorm:"column:no_rawat" json:"no_rawat"`
 	TglRegistrasi string  `gorm:"column:tgl_registrasi" json:"tgl_registrasi"`
 	JamReg        string  `gorm:"column:jam_reg" json:"jam_reg"`
 	KdDokter      string  `gorm:"column:kd_dokter" json:"kd_dokter"`
-	NoRkmMedis    string  `gorm:"column:no_rkmMedis" json:"no_rkmMedis"`
+	NoRkmMedis    string  `gorm:"column:no_rkm_medis" json:"no_rkm_medis"`
 	KdPoli        string  `gorm:"column:kd_poli" json:"kd_poli"`
 	PJawab        string  `gorm:"column:p_jawab" json:"p_jawab"`
 	AlmtPj        string  `gorm:"column:almt_pj" json:"almt_pj"`
@@ -17,63 +15,63 @@ type RegPeriksa struct {
 	Stts          string  `gorm:"column:stts" json:"stts"`
 	SttsDaftar    string  `gorm:"column:stts_daftar" json:"stts_daftar"`
 	StatusLanjut  string  `gorm:"column:status_lanjut" json:"status_lanjut"`
-	KdPj          string  `gorm:"column:dd_pj" json:"dd_pj"`
+	KdPj          string  `gorm:"column:kd_pj" json:"kd_pj"`
 	Umurdaftar    int     `gorm:"column:umurdaftar" json:"umurdaftar"`
 	Sttsumur      string  `gorm:"column:sttsumur" json:"sttsumur"`
 	StatusBayar   string  `gorm:"column:status_bayar" json:"status_bayar"`
 	StatusPoli    string  `gorm:"column:status_poli" json:"status_poli"`
 }
 type BridgingSep struct {
-	NoSep            string    `json:"no_sep"`
-	NoRawat          string    `json:"no_rawat"`
-	Tglsep           time.Time `json:"tglsep"`
-	Tglrujukan       time.Time `json:"tglrujukan"`
-	NoRujukan        string    `json:"no_rujukan"`
-	Kdppkrujukan     string    `json:"kdppkrujukan"`
-	Nmppkrujukan     string    `json:"nmppkrujukan"`
-	Kdppkpelayanan   string    `json:"kdppkpelayanan"`
-	Nmppkpelayanan   string    `json:"nmppkpelayanan"`
-	Jnspelayanan     string    `json:"jnspelayanan"`
-	Catatan          string    `json:"catatan"`
-	Diagawal         string    `json:"diagawal"`
-	Nmdiagnosaawal   string    `json:"nmdiagnosaawal"`
-	Kdpolitujuan     string    `json:"kdpolitujuan"`
-	Nmpolitujuan     string    `json:"nmpolitujuan"`
-	Klsrawat         string    `json:"klsrawat"`
-	Klsnaik          string    `json:"klsnaik"`
-	Pembiayaan       string    `json:"pembiayaan"`
-	Pjnaikkelas      string    `json:"pjnaikkelas"`
-	Lakalantas       string    `json:"lakalantas"`
-	User             string    `json:"user"`
-	Nomr             string    `json:"nomr"`
-	NamaPasien       string    `json:"nama_pasien"`
-	TanggalLahir     string    `json:"tanggal_lahir"`
-	Peserta          string    `json:"peserta"`
-	Jkel             string    `json:"jkel"`
-	NoKartu          string    `json:"no_kartu"`
-	Tglpulang        string    `json:"tglpulang"`
-	AsalRujukan      string    `json:"asal_rujukan"`
-	Eksekutif        string    `json:"eksekutif"`
-	Cob              string    `json:"cob"`
-	Notelep          string    `json:"notelep"`
-	Katarak          string    `json:"katarak"`
-	Tglkkl           time.Time `json:"tglkkl"`
-	Keterangankkl    string    `json:"keterangankkl"`
-	Suplesi          string    `json:"suplesi"`
-	NoSepSuplesi     string    `json:"no_sep_suplesi"`
-	Kdprop           string    `json:"kdprop"`
-	Nmprop           string    `json:"nmprop"`
-	Kdkab            string    `json:"kdkab"`
-	Nmkab            string    `json:"nmkab"`
-	Kdkec            string    `json:"kdkec"`
-	Nmkec            string    `json:"nmkec"`
-	Noskdp           string    `json:"noskdp"`
-	Kddpjp           string    `json:"kddpjp"`
-	Nmdpdjp          string    `json:"nmdpdjp"`
-	Tujuankunjungan  string    `json:"tujuankunjungan"`
-	Flagprosedur     string    `json:"flagprosedur"`
-	Penunjang        string    `json:"penunjang"`
-	Asesmenpelayanan string    `json:"asesmenpelayanan"`
-	Kddpjplayanan    string    `json:"kddpjplayanan"`
-	Nmdpjplayanan    string    `json:"nmdpjplayanan"`
+	NoSep            string `gorm:"column:no_sep" json:"no_sep"`
+	NoRawat          string `gorm:"column:no_rawat" json:"no_rawat"`
+	Tglsep           string `gorm:"column:tglsep" json:"tglsep"`
+	Tglrujukan       string `gorm:"column:tglrujukan" json:"tglrujukan"`
+	NoRujukan        string `gorm:"column:no_rujukan" json:"no_rujukan"`
+	Kdppkrujukan     string `gorm:"column:kdppkrujukan" json:"kdppkrujukan"`
+	Nmppkrujukan     string `gorm:"column:nmppkrujukan" json:"nmppkrujukan"`
+	Kdppkpelayanan   string `gorm:"column:kdppkpelayanan" json:"kdppkpelayanan"`
+	Nmppkpelayanan   string `gorm:"column:nmppkpelayanan" json:"nmppkpelayanan"`
+	Jnspelayanan     string `gorm:"column:jnspelayanan" json:"jnspelayanan"`
+	Catatan          string `gorm:"column:catatan" json:"catatan"`
+	Diagawal         string `gorm:"column:diagawal" json:"diagawal"`
+	Nmdiagnosaawal   string `gorm:"column:nmdiagnosaawal" json:"nmdiagnosaawal"`
+	Kdpolitujuan     string `gorm:"column:kdpolitujuan" json:"kdpolitujuan"`
+	Nmpolitujuan     string `gorm:"column:nmpolitujuan" json:"nmpolitujuan"`
+	Klsrawat         string `gorm:"column:klsrawat" json:"klsrawat"`
+	Klsnaik          string `gorm:"column:klsnaik" json:"klsnaik"`
+	Pembiayaan       string `gorm:"column:pembiayaan" json:"pembiayaan"`
+	Pjnaikkelas      string `gorm:"column:pjnaikkelas" json:"pjnaikkelas"`
+	Lakalantas       string `gorm:"column:lakalantas" json:"lakalantas"`
+	User             string `gorm:"column:user" json:"user"`
+	Nomr             string `gorm:"column:nomr" json:"nomr"`
+	NamaPasien       string `gorm:"column:nama_pasien" json:"nama_pasien"`
+	TanggalLahir     string `gorm:"column:tanggal_lahir" json:"tanggal_lahir"`
+	Peserta          string `gorm:"column:peserta" json:"peserta"`
+	Jkel             string `gorm:"column:jkel" json:"jkel"`
+	NoKartu          string `gorm:"column:no_kartu" json:"no_kartu"`
+	Tglpulang        string `gorm:"column:tglpulang" json:"tglpulang"`
+	AsalRujukan      string `gorm:"column:asal_rujukan" json:"asal_rujukan"`
+	Eksekutif        string `gorm:"column:eksekutif" json:"eksekutif"`
+	Cob              string `gorm:"column:cob" json:"cob"`
+	Notelep          string `gorm:"column:notelep" json:"notelep"`
+	Katarak          string `gorm:"column:katarak" json:"katarak"`
+	Tglkkl           string `gorm:"column:tglkkl" json:"tglkkl"`
+	Keterangankkl    string `gorm:"column:keterangankkl" json:"keterangankkl"`
+	Suplesi          string `gorm:"column:suplesi" json:"suplesi"`
+	NoSepSuplesi     string `gorm:"column:no_sep_suplesi" json:"no_sep_suplesi"`
+	Kdprop           string `gorm:"column:kdprop" json:"kdprop"`
+	Nmprop           string `gorm:"column:nmprop" json:"nmprop"`
+	Kdkab            string `gorm:"column:kdkab" json:"kdkab"`
+	Nmkab            string `gorm:"column:nmkab" json:"nmkab"`
+	Kdkec            string `gorm:"column:kdkec" json:"kdkec"`
+	Nmkec            string `gorm:"column:nmkec" json:"nmkec"`
+	Noskdp           string `gorm:"column:noskdp" json:"noskdp"`
+	Kddpjp           string `gorm:"column:kddpjp" json:"kddpjp"`
+	Nmdpdjp          string `gorm:"column:nmdpdjp" json:"nmdpdjp"`
+	Tujuankunjungan  string `gorm:"column:tujuankunjungan" json:"tujuankunjungan"`
+	Flagprosedur     string `gorm:"column:flagprosedur" json:"flagprosedur"`
+	Penunjang        string `gorm:"column:penunjang" json:"penunjang"`
+	Asesmenpelayanan string `gorm:"column:asesmenpelayanan" json:"asesmenpelayanan"`
+	Kddpjplayanan    string `gorm:"column:kddpjplayanan" json:"kddpjplayanan"`
+	Nmdpjplayanan    string `gorm:"column:nmdpjplayanan" json:"nmdpjplayanan"`
 }

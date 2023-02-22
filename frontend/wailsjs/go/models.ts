@@ -1,5 +1,21 @@
 export namespace models {
 	
+	export class MapingDokterDpjpvclaim {
+	    kd_dokter: string;
+	    kd_dokter_bpjs: string;
+	    nm_dokter_bpjs: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new MapingDokterDpjpvclaim(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kd_dokter = source["kd_dokter"];
+	        this.kd_dokter_bpjs = source["kd_dokter_bpjs"];
+	        this.nm_dokter_bpjs = source["nm_dokter_bpjs"];
+	    }
+	}
 	export class MapingPoliBpjs {
 	    kd_poli_rs: string;
 	    kd_poli_bpjs: string;
@@ -451,7 +467,7 @@ export namespace utils {
 	    umurSaatPelayanan: string;
 	    kodeDokter?: string;
 	    skdp?: string;
-	    tujuanKunj?: string;
+	    tujuanKunj: string;
 	    flagProcedure?: string;
 	    assesmentPel?: string;
 	    kdPenunjang?: string;

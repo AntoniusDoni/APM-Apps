@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"changeme/backend/database/models"
 	"changeme/backend/utils"
 	"encoding/json"
 	"fmt"
@@ -41,4 +42,11 @@ func (repo *Repository) GetListDokterKontrol(kodepoli, jenis, tanggal string) *u
 	json.Unmarshal(resBpjs.Body, &res)
 
 	return &res
+}
+
+func (repo *Repository) GetMapingDokterDpjpvclaim(kodeDokter string) *models.MapingDokterDpjpvclaim {
+	dokter := new(models.MapingDokterDpjpvclaim)
+	repo.db.Where("kd_dokter_bpjs=?", kodeDokter).Select("kd_dokter").Find(dokter)
+	// fmt.Println("Maping Dokter", dokter.KdDokter)
+	return dokter
 }

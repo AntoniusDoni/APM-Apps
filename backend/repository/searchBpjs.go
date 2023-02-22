@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -255,13 +256,13 @@ func (repo *Repository) DELETESKDP(nomorsurat string) *utils.HeadResponse {
 
 func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
 	pasien := repo.GetPasienByNIK(req.Nik)
+	dokter := repo.GetMapingDokterDpjpvclaim(req.KodeDokter)
 	now := time.Now().UTC()
 	regpriks := new(models.RegPeriksa)
 	regpriks.NoRawat, regpriks.NoReg = repo.GenerateNoRawat(req.KdPoli, req.KodeDokter)
-	regpriks.KdDokter = req.KodeDokter
+	regpriks.KdDokter = dokter.KdDokter
 	regpriks.AlmtPj = pasien.Alamatpj
 	regpriks.BiayaReg = 0
-	regpriks.KdDokter = req.KodeDokter
 	regpriks.KdPoli = req.KdPoli
 	regpriks.NoRkmMedis = req.NoMR
 	regpriks.PJawab = pasien.Namakeluarga
@@ -269,7 +270,7 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
 	regpriks.StatusBayar = "Belum Bayar"
 	regpriks.StatusLanjut = "Ralan"
 	regpriks.KdPj = "BPJ"
-	regpriks.JamReg = now.Format("hh:mm:ss")
+	regpriks.JamReg = fmt.Sprintf("%02d:%02d:%02d", now.Hour(), now.Minute(), now.Second())
 	regpriks.TglRegistrasi = now.Format(utils.YYYYMMDD)
 	regpriks.Sttsumur = "Th"
 	regpriks.Stts = "Belum"
@@ -280,8 +281,67 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
 		regpriks.SttsDaftar = "Lama"
 		regpriks.StatusPoli = "Lama"
 	}
-	fmt.Print(req.UmurSaatPelayanan)
-	regpriks.Umurdaftar = 0
+	splitum := strings.Split(req.UmurSaatPelayanan, " tahun")
+	umur, _ := strconv.Atoi(splitum[0])
+	regpriks.Umurdaftar = umur
+	// err := repo.db.Create(regpriks).Error
+
+	// fmt.Println()
+	briging := new(models.BridgingSep)
+	briging.NoSep = "341231223432"
+	briging.Tglsep = regpriks.TglRegistrasi
+	briging.NoRawat = "20230222/GI/0001"
+	briging.Tglrujukan = req.TglKunjungan
+	briging.NoRujukan = req.NoRujukan
+	briging.Kdppkrujukan = req.KdPPK
+	briging.Nmppkrujukan = req.NmProvider
+	briging.Kddpjplayanan = "0302R111"
+	briging.Nmdpjplayanan = "RS DIRGAHAYU"
+	briging.Jnspelayanan = req.KodeJnsPelayanan
+	briging.Catatan = ""
+	briging.Diagawal = req.Kdicd
+	briging.Nmdiagnosaawal = req.NmIcd
+	briging.Kdpolitujuan = req.KdPoli
+	briging.Nmpolitujuan = req.NmPoli
+	briging.Klsnaik = ""
+	briging.Klsrawat = req.KodeKelas
+	briging.Pembiayaan = ""
+	briging.Pjnaikkelas = ""
+	briging.Lakalantas = "0"
+	briging.Nomr = req.NoMR
+	briging.NamaPasien = req.Nama
+	briging.TanggalLahir = req.TglLahir
+	briging.Peserta = req.JenisPeserta
+	briging.Jkel = pasien.Jk
+	briging.NoKartu = req.NoKa
+	briging.Tglpulang = regpriks.TglRegistrasi
+	briging.AsalRujukan = "1"
+	briging.Eksekutif = "0"
+	briging.Cob = "0"
+	briging.Notelep = pasien.No_tlp
+	briging.Katarak = "0"
+	briging.Keterangankkl = ""
+	briging.Suplesi = "0"
+	briging.NoSepSuplesi = ""
+	briging.Noskdp = req.Skdp
+	briging.Kddpjp = req.KodeDokter
+	briging.Nmdpdjp = dokter.NmDokterBpjs
+	briging.Flagprosedur = req.FlagProcedure
+	briging.Penunjang = req.KdPenunjang
+	briging.Asesmenpelayanan = req.AssesmentPel
+	briging.Tglkkl = regpriks.TglRegistrasi
+	briging.Kdprop = "-"
+	briging.Nmkab = "-"
+	briging.Kdkab = "-"
+	briging.Nmkab = "-"
+	briging.Kdkec = "-"
+	briging.Nmkec = "-"
+	if req.TujuanKunj != "" {
+		briging.Tujuankunjungan = req.TujuanKunj
+	}
+	briging.Tujuankunjungan = "0"
+	err := repo.db.Create(briging).Error
+	fmt.Println(err)
 
 }
 
@@ -291,18 +351,21 @@ func (repo *Repository) GenerateNoRawat(kodepoli, kodedokter string) (string, st
 	norawat := ""
 	noreg := ""
 	now := time.Now().UTC()
-	date := now.Format(utils.YYYYMMDD1)
+	date := now.Format(utils.FORMATDATE)
+	num, _ := strconv.Atoi(repo.GetLastNoRawat(kodepoli, kodedokter))
 	switch fomatNum {
 	case "poli":
-		num, _ := strconv.Atoi(repo.GetLastNoRawat(kodepoli, kodedokter))
 		norawat = fmt.Sprintf("%s/%s/%04d", date, kodepoli, num+1)
-		noreg = fmt.Sprintf("%3d", num+1)
-
+		noreg = fmt.Sprintf("%03d", num+1)
 	case "dokter + poli":
-		num, _ := strconv.Atoi(repo.GetLastNoRawat(kodepoli, kodedokter))
 		norawat = fmt.Sprintf("%s/%s/%s/%04d", date, kodedokter, kodepoli, num+1)
 		noreg = fmt.Sprintf("%03d", num+1)
+	default:
+		date = now.Format(utils.YYYYMMDD1)
+		norawat = fmt.Sprintf("%s/%04d", date, num+1)
+		noreg = fmt.Sprintf("%03d", num+1)
 	}
+
 	return norawat, noreg
 }
 

@@ -36,7 +36,7 @@ export default function Pendaftaran() {
         umurSaatPelayanan: '',
         kodeDokter: '',
         skdp: '',
-        tujuanKunj: '',
+        tujuanKunj: '0',
         flagProcedure: '',
         assesmentPel:'',
         kdPenunjang:'',
@@ -46,7 +46,7 @@ export default function Pendaftaran() {
         setData(event.target.name, event.target.value)
     }
     const handleSubmit = () => {
-        
+      
         CreateRegis(data).then((resp)=>{
             
         })
@@ -262,6 +262,8 @@ export default function Pendaftaran() {
             {user?.JmlRujukan?.jumlahSEP > 0 && (
                 <>
                     <div className="grid md:grid-cols-3 md:gap-6 items-center">
+                    <div>
+                    <div className="mt-5" />
                         <FormInput
                             className={"relative z-0 w-full mb-6 group"}
                             name="skdp"
@@ -270,6 +272,7 @@ export default function Pendaftaran() {
                             error={errors.skdp}
                             onChange={handleOnChange}
                         />
+                        </div>
                         <div>
                             <div className="mb-1" />
                             <Select
@@ -279,7 +282,6 @@ export default function Pendaftaran() {
                                 error={errors.tujuanKunj}
                                 label={"Tujuan Kunjungan"}
                             >
-                                 <Option value={""}> - </Option>
                                 <Option value={"0"}>Normal</Option>
                                 <Option value={"1"}>Prosedur</Option>
                                 <Option value={"2"}>Konsul Dokter</Option>
@@ -334,7 +336,7 @@ export default function Pendaftaran() {
                             error={errors.assesmentPel}
                             label={"Assesment Pelayanan"}
                         >
-                             <Option value={""}> - </Option>
+                      
                             <Option value={"1"}>Poli spesialis tidak tersedia pada hari sebelumnya</Option>
                             <Option value={"2"}>Jam Poli telah berakhir pada hari sebelumnya</Option>
                             <Option value={"3"}>Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</Option>
