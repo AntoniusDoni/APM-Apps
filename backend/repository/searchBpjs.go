@@ -3,8 +3,10 @@ package repository
 import (
 	"changeme/backend/database/models"
 	"changeme/backend/utils"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -39,14 +41,14 @@ func (repo *Repository) SearchRujukanByNorujukan(no_rujukan, no_ka, alamat strin
 	urlreq := fmt.Sprintf(utils.GET_BYNO_RUJUKAN, utils.GET_CLAIM, no_rujukan)
 	urlgetjml := fmt.Sprintf(utils.GET_BYNO_RUJUKAN, utils.GET_CLAIM, fmt.Sprintf("JumlahSEP/1/%s", no_rujukan))
 	var res utils.ResponseSearchRujukan
-	resJmlrujukan, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlgetjml}, 30*time.Second)
+	resJmlrujukan, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlgetjml}, 60*time.Second)
 	if err != nil {
 		res.MetaData.Code = "503"
 		res.MetaData.Message = "Terjadi Kendala Jaringan"
 		return &res
 	}
 	json.Unmarshal(resJmlrujukan.Body, &res.JumlahSEPRujukan)
-	resBpjs, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlreq}, 30*time.Second)
+	resBpjs, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlreq}, 60*time.Second)
 	if err != nil {
 		res.MetaData.Code = "503"
 		res.MetaData.Message = "Terjadi Kendala Jaringan"
@@ -254,7 +256,7 @@ func (repo *Repository) DELETESKDP(nomorsurat string) *utils.HeadResponse {
 	return &res
 }
 
-func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
+func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran, ttd string) *utils.ResponseRegistrasi {
 	pasien := repo.GetPasienByNIK(req.Nik)
 	dokter := repo.GetMapingDokterDpjpvclaim(req.KodeDokter)
 	now := time.Now().UTC()
@@ -285,12 +287,10 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
 	umur, _ := strconv.Atoi(splitum[0])
 	regpriks.Umurdaftar = umur
 	// err := repo.db.Create(regpriks).Error
-
-	// fmt.Println()
 	briging := new(models.BridgingSep)
-	briging.NoSep = "341231223432"
+	briging.NoSep = "0302R1110223V010904"
 	briging.Tglsep = regpriks.TglRegistrasi
-	briging.NoRawat = "20230222/GI/0001"
+	briging.NoRawat = regpriks.NoRawat
 	briging.Tglrujukan = req.TglKunjungan
 	briging.NoRujukan = req.NoRujukan
 	briging.Kdppkrujukan = req.KdPPK
@@ -340,11 +340,51 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran) {
 		briging.Tujuankunjungan = req.TujuanKunj
 	}
 	briging.Tujuankunjungan = "0"
-	err := repo.db.Create(briging).Error
-	fmt.Println(err)
+	createDocSign(briging.NoSep, ttd)
+	// err = repo.db.Create(briging).Error
+	doc, err := utils.GenerateDocument(regpriks.NoReg, briging, regpriks.StatusLanjut)
+	// if err != nil {
+
+	// }
+	var res utils.ResponseRegistrasi
+	if err != nil {
+		res.MetaData.Code = "404"
+		res.MetaData.Message = utils.Failed
+		return &res
+	}
+	res.MetaData.Code = "200"
+	res.MetaData.Message = utils.SUCSSES
+	res.Doc = doc
+
+	return &res
 
 }
+func createDocSign(sep, files string) {
+	arrySplit := strings.Split(files, ",")
+	dec, err := base64.StdEncoding.DecodeString(arrySplit[1])
+	if err != nil {
+		panic(err)
+	}
 
+	f, err := os.Create("document/docsign/" + sep + ".png")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	if _, err := f.Write(dec); err != nil {
+		panic(err)
+	}
+	if err := f.Sync(); err != nil {
+		panic(err)
+	}
+
+	// go to begginng of file
+	f.Seek(0, 0)
+
+	// output file contents
+	io.Copy(os.Stdout, f)
+}
 func (repo *Repository) GenerateNoRawat(kodepoli, kodedokter string) (string, string) {
 	godotenv.Load()
 	fomatNum := os.Getenv("FORMAT_NUMBER")

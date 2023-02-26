@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.sigCanvas{
+    cursor: pointer;
+    border: 1px solid darkgray;
+    margin-bottom: 10px;
+}

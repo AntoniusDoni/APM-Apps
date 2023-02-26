@@ -6,6 +6,7 @@
   "frontend:build": "npm run build",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
+  "assetdir": "./document/",
   "author": {
     "name": "donioantonius",
     "email": "donioantonius@gmail.com"

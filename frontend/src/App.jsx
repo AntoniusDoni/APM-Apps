@@ -7,6 +7,7 @@ import Home from "./pages/home";
 import Pendaftaran from "./pages/pendaftaran";
 import HistoryKunjungan from "./pages/historykunjungan";
 import HistoryKontrol from "./pages/historykontrol";
+import PDFView from "./pages/pdfviewer";
 function App() {
     return (
         <AppProvider>
@@ -19,6 +20,9 @@ function App() {
                             <Route path="histrorykunjungan" element={<HistoryKunjungan/>}/>
                             <Route path="histrorykontrol" element={<HistoryKontrol/>}>
                                 <Route path=":noka" element={<HistoryKontrol/>}/>
+                            </Route>
+                            <Route path="document" element={<PDFView/>}>
+                             <Route path=":doc" element={<PDFView/>}/>
                             </Route>
                         </Route>
                     </Routes>

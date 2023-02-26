@@ -149,6 +149,10 @@ type HeadResponse struct {
 	Code    string `json:"code,omitempty"`
 	Message string `json:"message,omitempty"`
 }
+type ResponseRegistrasi struct {
+	MetaData HeadResponse `json:"metaData"`
+	Doc      string       `json:"doc,omitempty"`
+}
 type ResponseListSKDP struct {
 	MetaData HeadResponse `json:"metaData"`
 	Response struct {

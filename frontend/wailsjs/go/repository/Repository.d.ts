@@ -5,7 +5,7 @@ import {models} from '../models';
 import {context} from '../models';
 import {gorm} from '../models';
 
-export function CreateRegis(arg1:utils.RequestPendaftaran):Promise<void>;
+export function CreateRegis(arg1:utils.RequestPendaftaran,arg2:string):Promise<utils.ResponseRegistrasi>;
 
 export function CreateSKDP(arg1:utils.RequestSKDP):Promise<utils.ResponseCreateSKDP>;
 

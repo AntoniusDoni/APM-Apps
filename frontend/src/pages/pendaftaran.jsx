@@ -1,11 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState,useRef } from "react";
 import FormInput from "../components/FormInput"
+import Modal from "../components/Modal";
+import Loading from "../components/Loading"
 import Button from "../components/Button";
 import { useForm } from "@inertiajs/react";
 import { useBucket } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { Option, Select } from "../components/SelectInput";
 import {CreateRegis} from "../../wailsjs/go/repository/Repository"
+import SignatureCanvas from "react-signature-canvas";
 export default function Pendaftaran() {
     const { user } = useBucket()
     const navigate = useNavigate();
@@ -40,16 +43,35 @@ export default function Pendaftaran() {
         flagProcedure: '',
         assesmentPel:'',
         kdPenunjang:'',
-        listDokter: []
+        listDokter: [],
+     
     })
+    const padRef = useRef(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState("")
+    const [loading, setLoading] = useState(false)
+    const toggle = () => {
+        setIsOpen(!isOpen);
+    };
     const handleOnChange = (event) => {
         setData(event.target.name, event.target.value)
     }
+    const onClearCanvas=()=>{
+        padRef?.current?.clear()
+    }
     const handleSubmit = () => {
+        setLoading(true)
+        const canvas = padRef?.current?.toDataURL();
       
-        CreateRegis(data).then((resp)=>{
-            
-        })
+        CreateRegis(data,canvas).then((resp)=>{
+            if (resp.metaData.code == 200){
+                navigate("/document/"+resp.doc)
+            }else{
+                setMessage(resp.metaData.message)
+                toggle()
+            }
+        }).catch((err) => console.log(err))
+        .finally(() => setLoading(false))
 
     }
     let listdokter
@@ -95,6 +117,14 @@ export default function Pendaftaran() {
 
     return (
         <div>
+              {loading && (
+                <Loading />
+            )}
+            <Modal
+                isOpen={isOpen}
+                toggle={toggle}
+                title={"Peringantan"}
+            >{message}</Modal>
             <div className="grid md:grid-cols-3 md:gap-6">
                 <FormInput
                     className={"relative z-0 w-full mb-6 group"}
@@ -336,7 +366,6 @@ export default function Pendaftaran() {
                             error={errors.assesmentPel}
                             label={"Assesment Pelayanan"}
                         >
-                      
                             <Option value={"1"}>Poli spesialis tidak tersedia pada hari sebelumnya</Option>
                             <Option value={"2"}>Jam Poli telah berakhir pada hari sebelumnya</Option>
                             <Option value={"3"}>Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</Option>
@@ -345,17 +374,29 @@ export default function Pendaftaran() {
                         </Select>
                         </div>
                     </div>
+                    <div>
+                    <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanda Tangan</label>
+                        <SignatureCanvas 
+                         ref={padRef}
+                         canvasProps={{
+                           width: 500,
+                           height: 200,
+                           className: 'sigCanvas'
+                         }}
+                        >
+                        </SignatureCanvas>
+                        <Button onClick={onClearCanvas}>Bersihkan</Button>
+                    </div>
                 </>
             )
             }
-            <div className="flex items-center">
-                <Button
+            <div className="flex justify-end">
+                <Button className=""
                     onClick={handleSubmit}
                     processing={processing}
                 >
                     Proses Daftar Anjungan Pasien Mandiri BPJS
                 </Button>
-
             </div>
         </div >
     )
