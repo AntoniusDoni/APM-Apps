@@ -19,8 +19,8 @@ export default function SearchNOKartu() {
     };
 
     const { data, setData, processing, errors, reset, clearErrors } = useForm({
-        no_ka: '0001166324534',
-        no_rujukan: '0302B0461222P000563'
+        no_ka: '',
+        no_rujukan: ''
     })
   
     const navigate = useNavigate();

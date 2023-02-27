@@ -471,6 +471,7 @@ export namespace utils {
 	    flagProcedure?: string;
 	    assesmentPel?: string;
 	    kdPenunjang?: string;
+	    JmlRujukan?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new RequestPendaftaran(source);
@@ -508,6 +509,7 @@ export namespace utils {
 	        this.flagProcedure = source["flagProcedure"];
 	        this.assesmentPel = source["assesmentPel"];
 	        this.kdPenunjang = source["kdPenunjang"];
+	        this.JmlRujukan = source["JmlRujukan"];
 	    }
 	}
 	export class RequestSKDP {

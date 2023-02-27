@@ -138,6 +138,7 @@ type RequestPendaftaran struct {
 	FlagProcedure     string `json:"flagProcedure,omitempty"`
 	AssesmentPel      string `json:"assesmentPel,omitempty"`
 	KdPenunjang       string `json:"kdPenunjang,omitempty"`
+	JmlRujukan        string `json:"JmlRujukan,omitempty"`
 }
 
 type CheckPasien struct {

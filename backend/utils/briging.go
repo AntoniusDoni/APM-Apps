@@ -223,7 +223,6 @@ func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration, methode string) (*Respo
 		return nil, err
 	}
 	key := fmt.Sprintf("%s%s%d", constid, Secretkey, xTimestamp)
-	// fmt.Println(string(buf))
 	var resBody ResposeBodyBriging
 	json.Unmarshal(buf, &resBody)
 	if resBody.MetaData.Code != "200" {

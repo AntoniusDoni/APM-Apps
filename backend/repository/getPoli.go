@@ -19,6 +19,12 @@ func (repo *Repository) GetMapPoli(idpoli string) *models.MapingPoliBpjs {
 	repo.db.Where("kd_poli_bpjs=?", idpoli).Find(&listpoli)
 	return listpoli
 }
+func (repo *Repository) GetMapPoliBpjs(idpoli string) *models.MapingPoliBpjs {
+	listpoli := new(models.MapingPoliBpjs)
+	// fmt.Println("Kode poli", idpoli)
+	repo.db.Where("kd_poli_rs=?", idpoli).Find(&listpoli)
+	return listpoli
+}
 func (repo *Repository) GetKodePoliBPJS(poli string) *utils.ListPoli {
 	urlReq := fmt.Sprintf(utils.GET_LIST_POLI, utils.GET_CLAIM, poli)
 	resBpjs, err := utils.GETBPJSAPI(&utils.ReqInfo{URL: urlReq}, 30*time.Second)

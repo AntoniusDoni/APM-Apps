@@ -255,8 +255,123 @@ func (repo *Repository) DELETESKDP(nomorsurat string) *utils.HeadResponse {
 	}
 	return &res
 }
+func (repo *Repository) CreateSEP(req *utils.RequestPendaftaran, ttd string) *utils.ResponseRegistrasi {
 
-func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran, ttd string) *utils.ResponseRegistrasi {
+	now := time.Now().UTC()
+	date := now.Format(utils.YYYYMMDD)
+	poli := repo.GetMapPoliBpjs(req.KdPoli)
+	sett := repo.GetSetting()
+	urlReq := fmt.Sprintf(utils.INSERTSEP, utils.GET_CLAIM)
+	requestbody := new(utils.RequestInsertSEP)
+	requestbody.Request.TSep.NoKartu = req.NoKa
+	requestbody.Request.TSep.TglSep = date
+	requestbody.Request.TSep.PpkPelayanan = sett.KodePpk
+	requestbody.Request.TSep.JnsPelayanan = req.JnsPelayanan
+	requestbody.Request.TSep.KlsRawat.KlsRawatHak = req.KodeKelas
+	requestbody.Request.TSep.KlsRawat.Pembiayaan = "1"
+	requestbody.Request.TSep.KlsRawat.PenanggungJawab = "Pribadi"
+	requestbody.Request.TSep.NoMR = req.NoMR
+	requestbody.Request.TSep.Rujukan.AsalRujukan = "1"
+	requestbody.Request.TSep.Rujukan.TglRujukan = req.TglKunjungan
+	requestbody.Request.TSep.Rujukan.NoRujukan = req.NoRujukan
+	requestbody.Request.TSep.Rujukan.PpkRujukan = req.KdPPK
+	requestbody.Request.TSep.DiagAwal = req.Kdicd
+	requestbody.Request.TSep.Poli.Tujuan = poli.KdPoliBpjs
+	requestbody.Request.TSep.Poli.Eksekutif = "0"
+	requestbody.Request.TSep.Cob.Cob = "0"
+	requestbody.Request.TSep.Katarak.Katarak = "0"
+	requestbody.Request.TSep.Jaminan.LakaLantas = "0"
+	if req.JmlRujukan > "0" {
+		switch req.Skdp {
+		case "":
+			return &utils.ResponseRegistrasi{
+				MetaData: utils.HeadResponse{
+					Code:    "400",
+					Message: "Nomor SKDP tidak boleh kosong",
+				},
+			}
+		}
+		switch req.TujuanKunj {
+		case "":
+			return &utils.ResponseRegistrasi{
+				MetaData: utils.HeadResponse{
+					Code:    "400",
+					Message: "Tujuan Kunjungan Harus Di pilih",
+				},
+			}
+		case "1":
+			if req.FlagProcedure == "" {
+				return &utils.ResponseRegistrasi{
+					MetaData: utils.HeadResponse{
+						Code:    "400",
+						Message: "Flag Prosedur Harus Di pilih",
+					},
+				}
+			}
+			if req.KdPenunjang == "" {
+				return &utils.ResponseRegistrasi{
+					MetaData: utils.HeadResponse{
+						Code:    "400",
+						Message: "Kode Penunjang Harus Di pilih",
+					},
+				}
+			}
+		case "0", "2":
+			if req.AssesmentPel == "" {
+				return &utils.ResponseRegistrasi{
+					MetaData: utils.HeadResponse{
+						Code:    "400",
+						Message: "Assesment Pelayanan Harus Di pilih",
+					},
+				}
+			}
+		}
+
+	}
+	requestbody.Request.TSep.TujuanKunj = req.TujuanKunj
+	requestbody.Request.TSep.FlagProcedure = req.FlagProcedure
+	requestbody.Request.TSep.KdPenunjang = req.KdPenunjang
+	requestbody.Request.TSep.AssesmentPel = req.AssesmentPel
+	requestbody.Request.TSep.Skdp.NoSurat = req.Skdp
+	requestbody.Request.TSep.Skdp.KodeDPJP = req.KodeDokter
+	requestbody.Request.TSep.DpjpLayan = req.KodeDokter
+	requestbody.Request.TSep.NoTelp = req.NoTelepon
+	requestbody.Request.TSep.User = "Admin Pendaftaran"
+	reqbyte, err := json.Marshal(requestbody)
+	// fmt.Println(reqbyte)
+	if err != nil {
+		return &utils.ResponseRegistrasi{
+			MetaData: utils.HeadResponse{
+				Code:    "400",
+				Message: utils.Failed,
+			},
+		}
+	}
+	resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: urlReq, Body: reqbyte}, 30*time.Second, "POST")
+	if err != nil {
+		return &utils.ResponseRegistrasi{
+			MetaData: utils.HeadResponse{
+				Code:    "400",
+				Message: utils.Failed,
+			},
+		}
+	}
+	if resBpjs.MetaData.Code == "200" {
+		var responsSEP utils.ResposeSEP
+		json.Unmarshal(resBpjs.Body, &responsSEP)
+		noSep := responsSEP.Response.SEP.NoSep
+		return repo.CreateRegis(req, noSep, sett, ttd)
+	} else {
+		return &utils.ResponseRegistrasi{
+			MetaData: utils.HeadResponse{
+				Code:    resBpjs.MetaData.Code,
+				Message: resBpjs.MetaData.Message,
+			},
+		}
+	}
+
+}
+func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran, noSep string, sett *models.Setting, ttd string) *utils.ResponseRegistrasi {
 	pasien := repo.GetPasienByNIK(req.Nik)
 	dokter := repo.GetMapingDokterDpjpvclaim(req.KodeDokter)
 	now := time.Now().UTC()
@@ -288,15 +403,15 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran, ttd string) *
 	regpriks.Umurdaftar = umur
 	// err := repo.db.Create(regpriks).Error
 	briging := new(models.BridgingSep)
-	briging.NoSep = "0302R1110223V010904"
+	briging.NoSep = noSep
 	briging.Tglsep = regpriks.TglRegistrasi
 	briging.NoRawat = regpriks.NoRawat
 	briging.Tglrujukan = req.TglKunjungan
 	briging.NoRujukan = req.NoRujukan
 	briging.Kdppkrujukan = req.KdPPK
 	briging.Nmppkrujukan = req.NmProvider
-	briging.Kddpjplayanan = "0302R111"
-	briging.Nmdpjplayanan = "RS DIRGAHAYU"
+	briging.Kddpjplayanan = sett.KodePpk
+	briging.Nmdpjplayanan = sett.NamaInstansi
 	briging.Jnspelayanan = req.KodeJnsPelayanan
 	briging.Catatan = ""
 	briging.Diagawal = req.Kdicd
@@ -363,20 +478,20 @@ func createDocSign(sep, files string) {
 	arrySplit := strings.Split(files, ",")
 	dec, err := base64.StdEncoding.DecodeString(arrySplit[1])
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	f, err := os.Create("document/docsign/" + sep + ".png")
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	defer f.Close()
 
 	if _, err := f.Write(dec); err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	if err := f.Sync(); err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	// go to begginng of file
@@ -416,4 +531,10 @@ func (repo *Repository) GetLastNoRawat(kodepoli, kodedokter string) string {
 	}
 	repo.db.Model(&models.RegPeriksa{}).Select("ifnull(MAX(CONVERT(reg_periksa.no_reg,signed)),0) as norawat").Where("kd_poli=? and reg_periksa.tgl_registrasi=Now()", kodepoli).Scan(&norawat)
 	return norawat
+}
+
+func (repo *Repository) GetSetting() *models.Setting {
+	res := new(models.Setting)
+	repo.db.First(res)
+	return res
 }

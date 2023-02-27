@@ -3,9 +3,7 @@ package utils
 import (
 	"changeme/backend/database/models"
 	"fmt"
-	"log"
 
-	"github.com/jadefox10200/goprint"
 	"github.com/jung-kurt/gofpdf"
 )
 
@@ -70,7 +68,7 @@ func GenerateDocument(no_reg string, reg *models.BridgingSep, StatusLanjut strin
 	pdf.Ln(5)
 	pdf.CellFormat(30, 12, "No.Telepon ", "", 0, "L", false, 0, "")
 	pdf.CellFormat(10, 12, ":", "", 0, "L", false, 0, "")
-	pdf.CellFormat(90, 12, reg.Peserta, "", 0, "L", false, 0, "")
+	pdf.CellFormat(90, 12, reg.Notelep, "", 0, "L", false, 0, "")
 	pdf.CellFormat(30, 12, "COB ", "", 0, "L", false, 0, "")
 	pdf.CellFormat(10, 12, ":", "", 0, "L", false, 0, "")
 	pdf.CellFormat(90, 12, reg.Cob, "", 0, "L", false, 0, "")
@@ -215,29 +213,8 @@ func GenerateDocument(no_reg string, reg *models.BridgingSep, StatusLanjut strin
 		fmt.Println("ERR GENERATE DOC", err)
 		return "", err
 	}
-	goPrintDoc(reg.NoSep)
-
 	return reg.NoSep, nil
 }
+func PrintDoc(sep string) {
 
-func goPrintDoc(sep string) error {
-	printerName, _ := goprint.GetDefaultPrinterName()
-	printerHandle, err := goprint.GoOpenPrinter(printerName)
-	var erros error
-	if err != nil {
-		log.Fatalln("Failed to open printer")
-		erros = fmt.Errorf("Gagal Terhubung dengan Printer")
-		return erros
-	}
-	defer goprint.GoClosePrinter(printerHandle)
-	filePath := fmt.Sprintf("%s/%s%s", "document", sep, ".pdf")
-
-	//Send to printer:
-	err = goprint.GoPrint(printerHandle, filePath)
-	if err != nil {
-		erros = fmt.Errorf("Terjadi Kendala Saat Printing")
-		log.Fatalln("during the func sendToPrinter, there was an error")
-		return erros
-	}
-	return nil
 }

@@ -8,6 +8,7 @@ import Pendaftaran from "./pages/pendaftaran";
 import HistoryKunjungan from "./pages/historykunjungan";
 import HistoryKontrol from "./pages/historykontrol";
 import PDFView from "./pages/pdfviewer";
+import ViewPdf from "./pages/ViewPdf";
 function App() {
     return (
         <AppProvider>
@@ -24,7 +25,11 @@ function App() {
                             <Route path="document" element={<PDFView/>}>
                              <Route path=":doc" element={<PDFView/>}/>
                             </Route>
+                            <Route path="/ViewPdf" element={<ViewPdf/>}>
+                            <Route path=":doc" element={<ViewPdf/>}/>
+                            </Route>
                         </Route>
+                        
                     </Routes>
                 </HashRouter>
             </ErrorBoundary>

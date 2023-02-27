@@ -5,7 +5,9 @@ import {models} from '../models';
 import {context} from '../models';
 import {gorm} from '../models';
 
-export function CreateRegis(arg1:utils.RequestPendaftaran,arg2:string):Promise<utils.ResponseRegistrasi>;
+export function CreateRegis(arg1:utils.RequestPendaftaran,arg2:string,arg3:models.Setting,arg4:string):Promise<utils.ResponseRegistrasi>;
+
+export function CreateSEP(arg1:utils.RequestPendaftaran,arg2:string):Promise<utils.ResponseRegistrasi>;
 
 export function CreateSKDP(arg1:utils.RequestSKDP):Promise<utils.ResponseCreateSKDP>;
 
@@ -25,11 +27,15 @@ export function GetListPoli(arg1:string):Promise<Array<models.MapingPoliBpjs>>;
 
 export function GetMapPoli(arg1:string):Promise<models.MapingPoliBpjs>;
 
+export function GetMapPoliBpjs(arg1:string):Promise<models.MapingPoliBpjs>;
+
 export function GetMapingDokterDpjpvclaim(arg1:string):Promise<models.MapingDokterDpjpvclaim>;
 
 export function GetPasienByNIK(arg1:string):Promise<models.Pasien>;
 
 export function GetPoliKontrolBPJS(arg1:string,arg2:string,arg3:string):Promise<utils.ListPoliKontrol>;
+
+export function GetSetting():Promise<models.Setting>;
 
 export function ListHistory(arg1:string,arg2:string,arg3:string):Promise<utils.ResponseListHistory>;
 

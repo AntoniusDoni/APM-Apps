@@ -18,6 +18,7 @@ const (
 	DELETE_SEP              = "%sSEP/2.0/delete"
 	DELETE_SKDP             = "%sRencanaKontrol/Delete"
 	INSERTSKDP              = "%sRencanaKontrol/insert"
+	INSERTSEP               = "%sSEP/2.0/insert"
 )
 const Pasiet_NOT_EXIST = "Anda Tidak Terdaftar Sebagai Pasien..,Silahkan hubungi admisi kami..,Terimakasih"
 const Failed = "Mohon Maaf Sedang Terjadi kendala pada Sistem kami..,Silahkan hubungi admisi kami..,Terimakasih"

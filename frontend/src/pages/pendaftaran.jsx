@@ -7,13 +7,13 @@ import { useForm } from "@inertiajs/react";
 import { useBucket } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { Option, Select } from "../components/SelectInput";
-import {CreateRegis} from "../../wailsjs/go/repository/Repository"
+import {CreateSEP} from "../../wailsjs/go/repository/Repository"
 import SignatureCanvas from "react-signature-canvas";
 export default function Pendaftaran() {
     const { user } = useBucket()
     const navigate = useNavigate();
     const { data, setData, processing, errors, reset, clearErrors } = useForm({
-        no_ka: '0001926061569',
+        no_ka: '',
         no_rujukan: '',
         tglKunjungan: '',
         nama: '',
@@ -44,6 +44,7 @@ export default function Pendaftaran() {
         assesmentPel:'',
         kdPenunjang:'',
         listDokter: [],
+        JmlRujukan:'0',
      
     })
     const padRef = useRef(null);
@@ -63,9 +64,9 @@ export default function Pendaftaran() {
         setLoading(true)
         const canvas = padRef?.current?.toDataURL();
       
-        CreateRegis(data,canvas).then((resp)=>{
+        CreateSEP(data,canvas).then((resp)=>{
             if (resp.metaData.code == 200){
-                navigate("/document/"+resp.doc)
+                navigate("/ViewPdf/"+resp.doc)
             }else{
                 setMessage(resp.metaData.message)
                 toggle()
@@ -75,11 +76,11 @@ export default function Pendaftaran() {
 
     }
     let listdokter
-    let JmlRujukan
+    // let JmlRujukan
     useEffect(() => {
         if (user) {
             let data = user?.response?.rujukan
-            JmlRujukan = user?.JmlRujukan?.jumlahSEP
+            
 
             setData({
                 no_ka: data?.peserta?.noKartu,
@@ -107,7 +108,8 @@ export default function Pendaftaran() {
                 umurSaatPelayanan:data?.peserta?.umur?.umurSaatPelayanan,
                 umurSekarang:data?.peserta?.umur?.umurSekarang,
                 listDokter: user?.listdokter.list,
-                skdp:user?.skdp
+                skdp:user?.skdp,
+                JmlRujukan : user?.JmlRujukan?.jumlahSEP
             })
             return
         } else {
@@ -289,7 +291,7 @@ export default function Pendaftaran() {
                     disabled={true}
                 />
             </div>
-            {user?.JmlRujukan?.jumlahSEP > 0 && (
+            {data.JmlRujukan > 0 && (
                 <>
                     <div className="grid md:grid-cols-3 md:gap-6 items-center">
                     <div>
@@ -312,6 +314,7 @@ export default function Pendaftaran() {
                                 error={errors.tujuanKunj}
                                 label={"Tujuan Kunjungan"}
                             >
+                                <Option value={""}>- Pilih Tujuan Kunjungan -</Option>
                                 <Option value={"0"}>Normal</Option>
                                 <Option value={"1"}>Prosedur</Option>
                                 <Option value={"2"}>Konsul Dokter</Option>
@@ -366,6 +369,7 @@ export default function Pendaftaran() {
                             error={errors.assesmentPel}
                             label={"Assesment Pelayanan"}
                         >
+                            <Option value={""}>- Pilih Assesment Pelayanan -</Option>
                             <Option value={"1"}>Poli spesialis tidak tersedia pada hari sebelumnya</Option>
                             <Option value={"2"}>Jam Poli telah berakhir pada hari sebelumnya</Option>
                             <Option value={"3"}>Dokter Spesialis yang dimaksud tidak praktek pada hari sebelumnya</Option>
