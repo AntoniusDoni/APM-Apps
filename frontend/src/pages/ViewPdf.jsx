@@ -11,7 +11,7 @@ const ViewPdf = () => {
     const defaultLayoutPluginInstance = defaultLayoutPlugin();
 
     return (
-        <Worker workerUrl="backup/pdf.worker.min.js">
+        <Worker workerUrl="pdf.worker.min.js">
             <div
                 style={{
                     height: '750px',

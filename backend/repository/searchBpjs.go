@@ -401,7 +401,8 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran, noSep string,
 	splitum := strings.Split(req.UmurSaatPelayanan, " tahun")
 	umur, _ := strconv.Atoi(splitum[0])
 	regpriks.Umurdaftar = umur
-	// err := repo.db.Create(regpriks).Error
+	err := repo.db.Create(regpriks).Error
+
 	briging := new(models.BridgingSep)
 	briging.NoSep = noSep
 	briging.Tglsep = regpriks.TglRegistrasi
@@ -456,7 +457,7 @@ func (repo *Repository) CreateRegis(req *utils.RequestPendaftaran, noSep string,
 	}
 	briging.Tujuankunjungan = "0"
 	createDocSign(briging.NoSep, ttd)
-	// err = repo.db.Create(briging).Error
+	err = repo.db.Create(briging).Error
 	doc, err := utils.GenerateDocument(regpriks.NoReg, briging, regpriks.StatusLanjut)
 	// if err != nil {
 
