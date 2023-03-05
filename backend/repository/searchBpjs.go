@@ -194,20 +194,33 @@ func (repo *Repository) ListHistory(tglmulai, tglakhir, no_ka string) *utils.Res
 
 func (repo *Repository) CreateSKDP(req *utils.RequestSKDP) *utils.ResponseCreateSKDP {
 	tglrecana, _ := utils.ParseStrigDate(req.TglRencanaKontrol)
-	now := time.Now().UTC()
-	date := now.Format(utils.YYYYMMDD)
-
+	var res utils.ResponseCreateSKDP
 	requestbody := new(utils.InsertSKDP)
+	var date string
+	method := "POST"
+	var UrlCreateSKDP string
+	if req.TglPembuatanKontrol != "" {
+		date, _ = utils.ParseStrigDate(req.TglPembuatanKontrol)
+	}
+	now := time.Now().UTC()
+	date = now.Format(utils.YYYYMMDD)
+	if req.NoSuratKontrol != "" {
+		method = "PUT"
+		requestbody.Request.NoSuratKontrol = req.NoSuratKontrol
+		UrlCreateSKDP = fmt.Sprintf(utils.INSERTSKDP, utils.GET_CLAIM, "Update")
+	} else {
+		UrlCreateSKDP = fmt.Sprintf(utils.INSERTSKDP, utils.GET_CLAIM, "insert")
+	}
+
 	requestbody.Request.KodeDokter = req.KodeDokter
 	requestbody.Request.NoSEP = req.NoSEP
 	requestbody.Request.PoliKontrol = req.PoliKontrol
 	requestbody.Request.TglRencanaKontrol = tglrecana
 	requestbody.Request.User = "Admin APM"
 
-	UrlCreateSKDP := fmt.Sprintf(utils.INSERTSKDP, utils.GET_CLAIM)
 	reqbyte, err := json.Marshal(requestbody)
-	resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: UrlCreateSKDP, Body: reqbyte}, 30*time.Second, "POST")
-	var res utils.ResponseCreateSKDP
+	resBpjs, err := utils.POSTBPJSAPI(&utils.ReqInfo{URL: UrlCreateSKDP, Body: reqbyte}, 30*time.Second, method)
+
 	json.Unmarshal(resBpjs.Body, &res.Response)
 	res.MetaData.Code = resBpjs.MetaData.Code
 	res.MetaData.Message = resBpjs.MetaData.Message
@@ -224,13 +237,21 @@ func (repo *Repository) CreateSKDP(req *utils.RequestSKDP) *utils.ResponseCreate
 		skdpdb.NoSurat = res.Response.NoSuratKontrol
 		skdpdb.TglRencana = tglrecana
 		skdpdb.TglSurat = date
-		errs := repo.db.Create(skdpdb).Error
-		if errs != nil {
-			// fmt.Println(errs)
-			log.Println(errs)
-			return &res
+		if req.NoSuratKontrol != "" {
+			errs := repo.db.Updates(skdpdb).Error
+			if errs != nil {
+				log.Println(errs)
+				return &res
+			}
+		} else {
+			errs := repo.db.Create(skdpdb).Error
+			if errs != nil {
+				log.Println(errs)
+				return &res
 
+			}
 		}
+
 		return &res
 	}
 

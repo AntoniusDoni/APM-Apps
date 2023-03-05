@@ -12,6 +12,7 @@ import { useBucket } from "../context/AppContext";
 import { useNavigate, useParams } from "react-router-dom";
 import ModallConfrim from "../components/ModallConfrim";
 import { useModalState } from "../utils/hooks";
+import ModalSKDP from "./modalSkdp";
 export default function HistoryKontrol() {
     const { user, setUser } = useBucket()
     let { noka } = useParams()
@@ -27,9 +28,14 @@ export default function HistoryKontrol() {
     const [message, setMessage] = useState("")
     const [loading, setLoading] = useState(false)
     const formModal = useModalState()
+    const formModalEdit = useModalState()
     const toggleFormModal = (data = null) => {
         formModal.setData({ title: "Perhatian",text:"Apakah Anda Yakin akan Menghapus data ini?",confrim:"Delete",cancel:"Tidak", data })
         formModal.toggle()
+    }
+    const toggleFormModalEdit = (sep = null) => {
+        formModalEdit.setData({ title: "Ubah SKDP", sep })
+        formModalEdit.toggle()
     }
 
     const navigate = useNavigate();
@@ -44,6 +50,7 @@ export default function HistoryKontrol() {
         setLoading(true)
         ListSKDP(data.no_ka, data.tanggal).then((response) => {
             if (response.metaData.code == 200) {
+               
                 setList(response?.listdata?.list)
             } else {
                 setMessage(response.metaData.message)
@@ -125,6 +132,7 @@ export default function HistoryKontrol() {
                     <th scope="col" className="px-6 py-3">No Surat</th>
                     <th scope="col" className="px-6 py-3">No SEP</th>
                     <th scope="col" className="px-6 py-3">Poli</th>
+                    <th scope="col" className="px-6 py-3">Tgl Pembuatan</th>
                     <th scope="col" className="px-6 py-3">Tgl Kontrol</th>
                     <th>Daftar </th>
                 </thead>
@@ -136,6 +144,7 @@ export default function HistoryKontrol() {
                                 <td className="py-4 px-6">{detail.noSuratKontrol}</td>
                                 <td className="py-4 px-6">{detail.noSepAsalKontrol}</td>
                                 <td className="py-4 px-6">{detail.namaPoliTujuan}</td>
+                                <td className="py-4 px-6">{detail.tglTerbitKontrol}</td>
                                 <td className="py-4 px-6">{detail.tglRencanaKontrol}</td>
                                 <td className="py-4 px-6">
                                     {
@@ -151,6 +160,12 @@ export default function HistoryKontrol() {
                                                     <div className='flex space-x-1 items-center'>
                                                         <HiPlus />
                                                         <div>Daftar</div>
+                                                    </div>
+                                                </Dropdown.Item>
+                                                <Dropdown.Item onClick={() => toggleFormModalEdit(detail)}>
+                                                    <div className='flex space-x-1 items-center'>
+                                                        <HiPlus />
+                                                        <div>Ubah SKDP</div>
                                                     </div>
                                                 </Dropdown.Item>
                                                 <Dropdown.Item onClick={() => toggleFormModal(detail)}>
@@ -170,6 +185,7 @@ export default function HistoryKontrol() {
                 </tbody>
             </table>
             <ModallConfrim modalState={formModal} Onconfrim={deleteSkdp}></ModallConfrim>
+            <ModalSKDP modalState={formModalEdit}/>
         </div>
     )
 }

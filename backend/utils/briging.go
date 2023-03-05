@@ -200,14 +200,6 @@ func POSTBPJSAPI(reqinf *ReqInfo, timeout time.Duration, methode string) (*Respo
 		Timeout: timeout,
 	}
 
-	// decoder := json.NewDecoder(req.Body)
-	// var t InsertSKDP
-	// err = decoder.Decode(&t)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// log.Println()
-
 	res, err := cl.Do(req)
 
 	if err != nil {

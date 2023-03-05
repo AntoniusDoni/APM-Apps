@@ -513,6 +513,7 @@ export namespace utils {
 	    }
 	}
 	export class RequestSKDP {
+	    noSuratKontrol?: string;
 	    noSEP?: string;
 	    kodeDokter?: string;
 	    poliKontrol?: string;
@@ -520,6 +521,7 @@ export namespace utils {
 	    noka: string;
 	    namaPoli: string;
 	    nmdokter: string;
+	    tglPembuatanKontrol: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new RequestSKDP(source);
@@ -527,6 +529,7 @@ export namespace utils {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.noSuratKontrol = source["noSuratKontrol"];
 	        this.noSEP = source["noSEP"];
 	        this.kodeDokter = source["kodeDokter"];
 	        this.poliKontrol = source["poliKontrol"];
@@ -534,6 +537,7 @@ export namespace utils {
 	        this.noka = source["noka"];
 	        this.namaPoli = source["namaPoli"];
 	        this.nmdokter = source["nmdokter"];
+	        this.tglPembuatanKontrol = source["tglPembuatanKontrol"];
 	    }
 	}
 	export class ResponseCreateSKDP {

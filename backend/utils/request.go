@@ -83,6 +83,7 @@ type RequestInsertSEP struct {
 	} `json:"request"`
 }
 type SKDP struct {
+	NoSuratKontrol    string `json:"noSuratKontrol,omitempty"`
 	NoSEP             string `json:"noSEP,omitempty"`
 	KodeDokter        string `json:"kodeDokter,omitempty"`
 	PoliKontrol       string `json:"poliKontrol,omitempty"`
@@ -90,13 +91,15 @@ type SKDP struct {
 	User              string `json:"user,omitempty"`
 }
 type RequestSKDP struct {
-	NoSEP             string `json:"noSEP,omitempty"`
-	KodeDokter        string `json:"kodeDokter,omitempty"`
-	PoliKontrol       string `json:"poliKontrol,omitempty"`
-	TglRencanaKontrol string `json:"tglRencanaKontrol,omitempty"`
-	NoKa              string `json:"noka"`
-	NmPoliBpjs        string `json:"namaPoli"`
-	NmDokterBpjs      string `json:"nmdokter"`
+	NoSuratKontrol      string `json:"noSuratKontrol,omitempty"`
+	NoSEP               string `json:"noSEP,omitempty"`
+	KodeDokter          string `json:"kodeDokter,omitempty"`
+	PoliKontrol         string `json:"poliKontrol,omitempty"`
+	TglRencanaKontrol   string `json:"tglRencanaKontrol,omitempty"`
+	NoKa                string `json:"noka"`
+	NmPoliBpjs          string `json:"namaPoli"`
+	NmDokterBpjs        string `json:"nmdokter"`
+	TglPembuatanKontrol string `json:"tglPembuatanKontrol"`
 }
 type InsertSKDP struct {
 	Request SKDP `json:"request"`

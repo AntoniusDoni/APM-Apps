@@ -17,7 +17,7 @@ const (
 	GET_LIST_DOKTOR_KONTROL = "%sRencanaKontrol/JadwalPraktekDokter/JnsKontrol/%s/KdPoli/%s/TglRencanaKontrol/%s"
 	DELETE_SEP              = "%sSEP/2.0/delete"
 	DELETE_SKDP             = "%sRencanaKontrol/Delete"
-	INSERTSKDP              = "%sRencanaKontrol/insert"
+	INSERTSKDP              = "%sRencanaKontrol/%s"
 	INSERTSEP               = "%sSEP/2.0/insert"
 )
 const Pasiet_NOT_EXIST = "Anda Tidak Terdaftar Sebagai Pasien..,Silahkan hubungi admisi kami..,Terimakasih"

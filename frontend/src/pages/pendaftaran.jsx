@@ -378,7 +378,11 @@ export default function Pendaftaran() {
                         </Select>
                         </div>
                     </div>
-                    <div>
+                    
+                </>
+            )
+            }
+            <div>
                     <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanda Tangan</label>
                         <SignatureCanvas 
                          ref={padRef}
@@ -391,9 +395,6 @@ export default function Pendaftaran() {
                         </SignatureCanvas>
                         <Button onClick={onClearCanvas}>Bersihkan</Button>
                     </div>
-                </>
-            )
-            }
             <div className="flex justify-end">
                 <Button className=""
                     onClick={handleSubmit}
